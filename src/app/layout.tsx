@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Project_Planner",
+  title: "Project Planner",
   description: "Revolutionising Planning",
 };
 

@@ -5,9 +5,16 @@ export const theme = createSystem(defaultConfig, {
   theme: {
     tokens: {
       fonts: {
-        heading: { value: "var(--font-noto-sans), apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'", },
-        body: { value: "var(--font-noto-sans), apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'", }
+        body: { value: "DM Sans, sans-serif" },
+        heading: { value: "Montserrat, sans-serif" },
+      },
+    },
+    semanticTokens: {
+      colors: {
+        ourBg: { value: "#e4e6e9" },
+        ourBlue: { value: "#004aad" },
+        ourRed: { value: "#ff3131" },
       },
     },
   },
-})
+});
