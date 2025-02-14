@@ -12,6 +12,7 @@ export const theme = createSystem(defaultConfig, {
     semanticTokens: {
       colors: {
         ourBg: { value: "#e4e6e9" },
+        ourBgTrans: { value: "rgba(228, 230, 233, 0.5)" },
         ourBlue: { value: "#004aad" },
         ourRed: { value: "#ff3131" },
       },

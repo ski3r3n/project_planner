@@ -1,5 +1,5 @@
 "use client";
-import { Box, Heading, Button, Image } from "@chakra-ui/react";
+import { Box, Heading, Button } from "@chakra-ui/react";
 
 export default function Home() {
   return (
@@ -63,21 +63,22 @@ export default function Home() {
           mt: "-12",
           mr: "-12",
           ml: "20",
-          width: "xl",
+          width: "100vh",
           h: "100vh",
           bgImage: "url('womanWritingOnCalendar.jpg')",
-          display: "flex",
           justifyContent: "flex-end",
         }}>
         <Box
-          bgImage={{
-            lg: "linear-gradient(to right, #e4e6e9, transparent)",
-            base: "linear-gradient(to top, #e4e6e9, rgba(228, 230, 233, 0.36))",
+          bgGradient={{
+            lg: "to-r",
+            base: "to-t",
           }}
+          gradientFrom={"ourBg"}
+          gradientTo={"ourBgTrans"}
           h={{ lg: "100vh", base: "80vh" }}
           width={"100%"}
         />
-        <Box h={{ lg: "0vh", base: "20vh" }} bgColor={"#e4e6e9"}
+        <Box h={{ lg: "0vh", base: "20vh" }} bgColor={"ourBg"}
           width={"100%"}></Box>
       </Box>
     </Box>
