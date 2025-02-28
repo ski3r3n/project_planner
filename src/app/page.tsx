@@ -19,27 +19,27 @@ export default function Home() {
           PROJECT PLANNER &nbsp;
         </Box>
         <Heading
-          fontSize={{ lg: "9xl", base: "7xl" }}
+          fontSize={{ lg: "8xl", base: "6xl" }}
           w={"fit"}
-          mt={{ lg: "28", base: "12" }}
+          mt={{ lg: "24", base: "12" }}
           color={"ourBlue"}
           fontWeight={"semibold"}>
           DYNAMIC
         </Heading>
         <Heading
-          fontSize={{ lg: "9xl", base: "7xl" }}
-          mt={{ lg: "28", base: "12" }}
+          fontSize={{ lg: "8xl", base: "6xl" }}
+          mt={{ lg: "24", base: "12" }}
           fontWeight={"semibold"}>
           CALENDAR
         </Heading>
         <Heading
-          fontSize={{ lg: "9xl", base: "7xl" }}
-          mt={{ lg: "28", base: "12" }}
+          fontSize={{ lg: "8xl", base: "6xl" }}
+          mt={{ lg: "24", base: "12" }}
           fontWeight={"semibold"}>
           PLANNER
         </Heading>
 
-        <Box fontSize={"xl"} display={"flex"} mt={{ lg: "28", base: "12" }}>
+        <Box fontSize={"xl"} display={"flex"} mt={{ lg: "24", base: "12" }}>
           <Box mr={"12"} padding={"1.5"}>
             EXPERIENCE EFFICIENCY
           </Box>
@@ -55,7 +55,8 @@ export default function Home() {
         top="0"
         height="100vh"
         width="100%"
-        bgImage= "url('womanWritingOnCalendar.jpg')"
+        bgImage="url('womanWritingOnCalendar.jpg')"
+        bgRepeat="round"
         z-index="-3"
         lg={{
           position: "static",
@@ -65,7 +66,6 @@ export default function Home() {
           ml: "20",
           width: "100vh",
           h: "100vh",
-          bgImage: "url('womanWritingOnCalendar.jpg')",
           justifyContent: "flex-end",
         }}>
         <Box
