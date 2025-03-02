@@ -1,5 +1,5 @@
 "use client";
-import { Box, Heading, Button } from "@chakra-ui/react";
+import { Box, Heading, Button, Link } from "@chakra-ui/react";
 
 export default function Home() {
   return (
@@ -44,8 +44,13 @@ export default function Home() {
             EXPERIENCE EFFICIENCY
           </Box>
           <Button padding={"3"} rounded={"xl"} backgroundColor={"white"}>
-            SIGN UP NOW
+            SIGN UP
           </Button>
+          <Link href="/dashboard" ml={"4"}>
+            <Button padding={"3"} rounded={"xl"} backgroundColor={"white"}>
+              Log In
+            </Button>
+          </Link>
         </Box>
       </Box>
 
@@ -78,7 +83,9 @@ export default function Home() {
           h={{ lg: "100vh", base: "80vh" }}
           width={"100%"}
         />
-        <Box h={{ lg: "0vh", base: "20vh" }} bgColor={"ourBg"}
+        <Box
+          h={{ lg: "0vh", base: "20vh" }}
+          bgColor={"ourBg"}
           width={"100%"}></Box>
       </Box>
     </Box>
