@@ -30,7 +30,7 @@ export default function Home() {
           fontSize={{ lg: "8xl", base: "6xl" }}
           mt={{ lg: "24", base: "12" }}
           fontWeight={"semibold"}>
-          CALENDAR
+          PROJECT
         </Heading>
         <Heading
           fontSize={{ lg: "8xl", base: "6xl" }}
