@@ -7,7 +7,7 @@ export default function Sidebar() {
     <>
       <Box h={"100vh"} w={"250px"} bg={"gray.100"} p={4}>
         <Heading w="fit" fontSize="2xl" margin="auto" mt={10}>
-          Schedule
+          Projects
         </Heading>
         <Button
           fontSize={"xl"}
