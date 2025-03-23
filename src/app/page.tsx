@@ -43,9 +43,11 @@ export default function Home() {
           <Box mr={"12"} padding={"1.5"}>
             EXPERIENCE EFFICIENCY
           </Box>
-          <Button padding={"3"} rounded={"xl"} backgroundColor={"white"}>
-            SIGN UP
-          </Button>
+          <Link href="/dashboard">
+            <Button padding={"3"} rounded={"xl"} backgroundColor={"white"}>
+              SIGN UP
+            </Button>
+          </Link>
           <Link href="/dashboard" ml={"4"}>
             <Button padding={"3"} rounded={"xl"} backgroundColor={"white"}>
               Log In
