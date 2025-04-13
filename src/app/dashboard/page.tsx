@@ -5,8 +5,11 @@ import { Box /*Heading, Button*/ } from "@chakra-ui/react";
 export default function Dashboard() {
   return (
     <>
-      <Sidebar />
-      <Box>This will become the dashboard</Box>
+      <Box>
+        <Sidebar>
+          <Box>This will become the dashboard</Box>
+        </Sidebar>
+      </Box>
     </>
   );
 }
