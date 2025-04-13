@@ -2,7 +2,7 @@
 
 import { Box, Heading, Button, Link } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
-export default function Sidebar({ children }: { children: React.ReactNode }) {
+export default function Sidebar({ children, selected }: { children: React.ReactNode; selected: number }) {
   return (
     <>
       <Box display="flex">
@@ -38,13 +38,13 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             flexDir={"row"}
             justifyContent={"flex-start"}>
             <Link w="fit" fontSize="xl" textDecor={"underline"} mr={20}>
-              Overview
+              {selected == 1 ? <b>Overview</b> : "Overview"}
             </Link>
             <Link w="fit" fontSize="xl" textDecor={"underline"} mr={20}>
-              Project
+              {selected == 2 ? <b>Project</b> : "Project"}
             </Link>
             <Link w="fit" fontSize="xl" textDecor={"underline"}>
-              Calendar
+              {selected == 3 ? <b>Calendar</b> : "Calendar"}
             </Link>
           </Box>
           <Box p="10"> {children}</Box>

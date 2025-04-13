@@ -6,7 +6,7 @@ export default function Dashboard() {
   return (
     <>
       <Box>
-        <Sidebar>
+        <Sidebar selected={1}>
           <Box>This will become the dashboard</Box>
         </Sidebar>
       </Box>
