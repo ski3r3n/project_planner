@@ -2,7 +2,13 @@
 
 import { Box, Heading, Button, Link } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
-export default function Sidebar({ children, selected }: { children: React.ReactNode; selected: number }) {
+export default function Sidebar({
+  children,
+  selected,
+}: {
+  children: React.ReactNode;
+  selected: number;
+}) {
   return (
     <>
       <Box display="flex">
