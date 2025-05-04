@@ -16,15 +16,18 @@ export default function Sidebar({
           <Heading w="fit" fontSize="2xl" margin="auto" mt={5} mb={5}>
             Projects
           </Heading>
-          <Button
+          <Link
             fontSize={"xl"}
             width="100%"
             height="28"
             _hover={{ bgColor: "ourBg" }}
             shadow={"md"}
-            mt={5}>
-            Project Planner
-          </Button>
+            mt={5}
+            href="/dashboard/project/1"
+            display="flex"
+            justifyContent={"center"}>
+            <Button>Project Planner {/* replace with automation */}</Button>
+          </Link>
           <Button
             fontSize={"xl"}
             width="100%"
@@ -43,13 +46,13 @@ export default function Sidebar({
             display="flex"
             flexDir={"row"}
             justifyContent={"flex-start"}>
-            <Link w="fit" fontSize="xl" textDecor={"underline"} mr={20}>
+            <Link w="fit" fontSize="xl" textDecor={"underline"} mr={20} href="/dashboard">
               {selected == 1 ? <b>Overview</b> : "Overview"}
             </Link>
-            <Link w="fit" fontSize="xl" textDecor={"underline"} mr={20}>
+            <Link w="fit" fontSize="xl" textDecor={"underline"} mr={20} href="/dashboard/project">
               {selected == 2 ? <b>Project</b> : "Project"}
             </Link>
-            <Link w="fit" fontSize="xl" textDecor={"underline"}>
+            <Link w="fit" fontSize="xl" textDecor={"underline"} href="/dashboard/project/1/calendar">
               {selected == 3 ? <b>Calendar</b> : "Calendar"}
             </Link>
           </Box>

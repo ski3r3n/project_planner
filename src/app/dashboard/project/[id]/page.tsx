@@ -3,11 +3,11 @@ import Sidebar from "@/components/sidebar";
 import TaskCard from "@/components/taskcard";
 import { Box /*Heading, Button*/ } from "@chakra-ui/react";
 
-export default function Dashboard() {
+export default function ProjectID() {
   return (
     <>
       <Box>
-        <Sidebar selected={1}>
+        <Sidebar selected={2}>
           <Box
             display="flex"
             flexDir="row"
@@ -15,7 +15,7 @@ export default function Dashboard() {
             gap={5}
             overflow={"wrap"}>
             {" "}
-            {/* load tasks and meetings of user */}
+            {/* replace with project specific tasks */}
             <TaskCard
               type="Meeting"
               name="Discuss stuff"
