@@ -12,9 +12,9 @@ export default function Demo() { {/* replace with project specific tasks */}
     data: [
       { _: 0, days: 80, month: "Ideation" },
       { _: 80, days: 95, month: "Survey" },
-      { _: 70, days: 105, month: "March" },
-      { _: 175, days: 86, month: "October" },
-      { _: 185, days: 91, month: "November" },
+      { _: 70, days: 105, month: "UI" },
+      { _: 175, days: 86, month: "Backend" },
+      { _: 185, days: 91, month: "Report" },
       { _: 300, days: 65, __: 0, month: "Publish" },
     ],
     series: [
