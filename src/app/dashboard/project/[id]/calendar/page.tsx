@@ -1,67 +1,77 @@
 "use client";
 import { Box } from "@chakra-ui/react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, TooltipProps } from "recharts";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  TooltipProps,
+} from "recharts";
 import { Chart, useChart } from "@chakra-ui/charts";
 import Sidebar from "@/components/sidebar";
 
 export default function Calendar() {
   // Helper function to format dates
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
   // Helper function to calculate days between two dates
-  const daysBetween = (start : Date, end : Date) => {
-    return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  const daysBetween = (start: Date, end: Date) => {
+    return Math.round(
+      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    );
   };
 
   // Create project timeline with actual dates
-  const startDate = new Date('2025-01-01'); // this can be changed in 
-  
+  const startDate = new Date("2025-01-01"); // this can be changed in
+
   // Define project phases with start and end dates
   const projectPhases = [
-    { 
-      phase: "Ideation", 
-      start: new Date('2025-01-01'), 
-      end: new Date('2025-03-22')  // 80 days
+    {
+      phase: "Ideation",
+      start: new Date("2025-01-01"),
+      end: new Date("2025-03-22"), // 80 days
     },
-    { 
-      phase: "Survey", 
-      start: new Date('2025-03-22'), 
-      end: new Date('2025-06-25')  // 95 days
+    {
+      phase: "Survey",
+      start: new Date("2025-03-22"),
+      end: new Date("2025-06-25"), // 95 days
     },
-    { 
-      phase: "UI", 
-      start: new Date('2025-03-12'),  // Starts 10 days before Survey (overlapping)
-      end: new Date('2025-06-25')  // 105 days
+    {
+      phase: "UI",
+      start: new Date("2025-03-12"), // Starts 10 days before Survey (overlapping)
+      end: new Date("2025-06-25"), // 105 days
     },
-    { 
-      phase: "Backend", 
-      start: new Date('2025-06-25'), 
-      end: new Date('2025-09-19')  // 86 days
+    {
+      phase: "Backend",
+      start: new Date("2025-06-25"),
+      end: new Date("2025-09-19"), // 86 days
     },
-    { 
-      phase: "Report", 
-      start: new Date('2025-07-05'),  // Starts 10 days after Backend (overlapping)
-      end: new Date('2025-10-04')  // 91 days
+    {
+      phase: "Report",
+      start: new Date("2025-07-05"), // Starts 10 days after Backend (overlapping)
+      end: new Date("2025-10-04"), // 91 days
     },
-    { 
-      phase: "Publish", 
-      start: new Date('2025-10-28'), 
-      end: new Date('2026-01-01')  // 65 days
-    }
+    {
+      phase: "Publish",
+      start: new Date("2025-10-28"),
+      end: new Date("2026-01-01"), // 65 days
+    },
   ];
 
   // Calculate the end date of the project
-  const endDate = new Date('2026-01-01');
+  const endDate = new Date("2026-01-01");
   const projectDuration = daysBetween(startDate, endDate);
 
   // Prepare data for the chart
-  const chartData = projectPhases.map(phase => {
+  const chartData = projectPhases.map((phase) => {
     const daysBeforeStart = daysBetween(startDate, phase.start);
     const phaseDuration = daysBetween(phase.start, phase.end);
     const daysAfterEnd = projectDuration - daysBeforeStart - phaseDuration;
-    
+
     return {
       phase: phase.phase,
       days_before: daysBeforeStart,
@@ -69,7 +79,7 @@ export default function Calendar() {
       days_after: daysAfterEnd,
       startDate: formatDate(phase.start),
       endDate: formatDate(phase.end),
-      dateRange: `${formatDate(phase.start)} - ${formatDate(phase.end)}`
+      dateRange: `${formatDate(phase.start)} - ${formatDate(phase.end)}`,
     };
   });
 
@@ -83,22 +93,30 @@ export default function Calendar() {
   });
 
   // Custom tooltip to show date information
-  const CustomTooltip:React.FC<TooltipProps<number, string>> = ({ active, payload }) => {
+  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
+    active,
+    payload,
+  }) => {
     console.log(payload);
     console.log(active);
-    if (active && payload && payload.length) { // check if not null
+    if (active && payload && payload.length) {
+      // check if not null
       const data = payload[0].payload;
       return (
-        <Box className="custom-tooltip" style={{ 
-          backgroundColor: 'white', 
-          padding: '10px', 
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-        }}>
-          <Box><strong>{data.phase}</strong></Box>
-          <p>{data.dateRange}</p>
-          <p>Duration: {data.days} days</p>
+        <Box
+          className="custom-tooltip"
+          style={{
+            backgroundColor: "white",
+            padding: "10px",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+          }}>
+          <Box>
+            <strong>{data.phase}</strong>
+          </Box>
+          <Box>{data.dateRange}</Box>
+          <Box>Duration: {data.days} days</Box>
         </Box>
       );
     }
@@ -109,10 +127,13 @@ export default function Calendar() {
     <Sidebar selected={3}>
       <Chart.Root maxH="md" chart={chart}>
         <BarChart layout="vertical" data={chart.data}>
-          <CartesianGrid stroke={chart.color("border.muted")} vertical={false} />
-          <XAxis 
-            type="number" 
-            axisLine={false} 
+          <CartesianGrid
+            stroke={chart.color("border.muted")}
+            vertical={false}
+          />
+          <XAxis
+            type="number"
+            axisLine={false}
             tickLine={false}
             domain={[0, projectDuration]}
             tickFormatter={(value) => {
