@@ -22,6 +22,7 @@ export default function Dashboard() {
               project="Project Planner"
               time="3/5/2025 13:05"
               link="meet.google.com"
+              taskId={1}
             />
             <TaskCard
               type="Task"
@@ -29,6 +30,7 @@ export default function Dashboard() {
               project="Project Planner"
               time="10/6/2025"
               link="github.com/ski3r3n/project_planner"
+              taskId={2}
             />
             <TaskCard
               type="Goal"
@@ -36,6 +38,7 @@ export default function Dashboard() {
               project="Project Planner"
               time="5/9/2025"
               link="github.com/ski3r3n/project_planner"
+              taskId={3}
             />
           </Box>
         </Sidebar>

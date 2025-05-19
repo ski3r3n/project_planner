@@ -1,5 +1,5 @@
 "use client";
-
+import { usePathname } from "next/navigation";
 import { Box, Heading, Link } from "@chakra-ui/react";
 export default function TaskCard({
   type,
@@ -7,13 +7,18 @@ export default function TaskCard({
   name,
   time,
   link = "#",
+  taskId,
 }: {
   type: string;
   project: string;
   time: React.ReactNode;
   name: string;
   link?: string;
+  taskId: number;
 }) {
+  const pathname = usePathname();
+  const pathParts = pathname.split("/");
+  const projectId = pathParts[3]; // if it works it works surely
   return (
     <>
       <Box
@@ -25,9 +30,11 @@ export default function TaskCard({
         flexDir="column"
         justifyContent="center">
         <Heading w="fit" fontSize="2xl" mt={5} mb={5}>
-          {type}: {name}
-          <br />
-          From: {project}
+          <Link href={`./${projectId}/${taskId}`}>
+            {type}: {name}
+            <br />
+            From: {project}
+          </Link>
         </Heading>
         By: {time}
         <br />

@@ -8,3 +8,7 @@ body {
   background-color: #e4e6e9;
   width: 100%;
 }
+::selection {
+  background-color: #77b2ff!important;
+  color: auto!important;
+}
