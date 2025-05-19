@@ -7,20 +7,20 @@ export default function Demo() { {/* replace with project specific tasks */}
   const chart = useChart({
     // how to use
     // length = 365 total
-    // _ and __ mark the start and end
+    // days_before and days_after mark the start and end
     // days is the actual length
     data: [
-      { _: 0, days: 80, month: "Ideation" },
-      { _: 80, days: 95, month: "Survey" },
-      { _: 70, days: 105, month: "UI" },
-      { _: 175, days: 86, month: "Backend" },
-      { _: 185, days: 91, month: "Report" },
-      { _: 300, days: 65, __: 0, month: "Publish" },
+      { days_before: 0, days: 80, month: "Ideation" },
+      { days_before: 80, days: 95, month: "Survey" },
+      { days_before: 70, days: 105, month: "UI" },
+      { days_before: 175, days: 86, month: "Backend" },
+      { days_before: 185, days: 91, month: "Report" },
+      { days_before: 300, days: 65, days_after: 0, month: "Publish" },
     ],
     series: [
-      { name: "_", color: "transparent", stackId: "a" },
+      { name: "days_before", color: "transparent", stackId: "a" },
       { name: "days", color: "purple.solid", stackId: "a" },
-      { name: "__", color: "transparent", stackId: "a" },
+      { name: "days_after", color: "transparent", stackId: "a" },
     ],
   })
 
