@@ -97,8 +97,6 @@ export default function Calendar() {
     active,
     payload,
   }) => {
-    console.log(payload);
-    console.log(active);
     if (active && payload && payload.length) {
       // check if not null
       const data = payload[0].payload;
