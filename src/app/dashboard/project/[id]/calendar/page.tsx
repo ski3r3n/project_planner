@@ -1,21 +1,22 @@
 "use client";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { Box } from "@chakra-ui/react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, TooltipProps } from "recharts";
 import { Chart, useChart } from "@chakra-ui/charts";
 import Sidebar from "@/components/sidebar";
 
-export default function Demo() {
+export default function Calendar() {
   // Helper function to format dates
-  const formatDate = (date) => {
+  const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
   // Helper function to calculate days between two dates
-  const daysBetween = (start, end) => {
-    return Math.round((end - start) / (1000 * 60 * 60 * 24));
+  const daysBetween = (start : Date, end : Date) => {
+    return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
   };
 
   // Create project timeline with actual dates
-  const startDate = new Date('2025-01-01');
+  const startDate = new Date('2025-01-01'); // this can be changed in 
   
   // Define project phases with start and end dates
   const projectPhases = [
@@ -82,21 +83,23 @@ export default function Demo() {
   });
 
   // Custom tooltip to show date information
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
+  const CustomTooltip:React.FC<TooltipProps<number, string>> = ({ active, payload }) => {
+    console.log(payload);
+    console.log(active);
+    if (active && payload && payload.length) { // check if not null
       const data = payload[0].payload;
       return (
-        <div className="custom-tooltip" style={{ 
+        <Box className="custom-tooltip" style={{ 
           backgroundColor: 'white', 
           padding: '10px', 
           border: '1px solid #ccc',
           borderRadius: '4px',
           boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
         }}>
-          <p><strong>{data.phase}</strong></p>
+          <Box><strong>{data.phase}</strong></Box>
           <p>{data.dateRange}</p>
           <p>Duration: {data.days} days</p>
-        </div>
+        </Box>
       );
     }
     return null;
