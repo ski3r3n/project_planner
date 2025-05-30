@@ -87,7 +87,7 @@ export default function Calendar() {
     data: chartData,
     series: [
       { name: "days_before", color: "transparent", stackId: "a" },
-      { name: "days", color: "purple.solid", stackId: "a" },
+      { name: "days", color: "blue.solid", stackId: "a" },
       { name: "days_after", color: "transparent", stackId: "a" },
     ],
   });

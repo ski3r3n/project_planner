@@ -1,12 +1,9 @@
 "use client";
-import { usePathname } from "next/navigation";
-
 import Sidebar from "@/components/sidebar";
-import { Box, Heading, Link } from "@chakra-ui/react";
+import { Box, Button, Heading, Link } from "@chakra-ui/react";
 import { PiSparkle } from "react-icons/pi";
 import { FiPlus } from "react-icons/fi";
 export default function ProjectIDTask() {
-  const pathName = usePathname();
   return (
     <>
       <Box>
@@ -55,23 +52,12 @@ export default function ProjectIDTask() {
             </Link>
           </Box>
           <Box>
-            <Link
-              href={`${pathName}/aibreakdown`}
-              padding={5}
-              mr={5}
-              mt={5}
-              bg={"white"}
-            >
+            <Button padding={5} mr={5} mt={5} bg={"white"}>
               <PiSparkle></PiSparkle>AI BREAKDOWN
-            </Link>
-            <Link
-              href={`${pathName}/edit`}
-              padding={5}
-              mr={5}
-              mt={5}
-              bg={"white"}>
+            </Button>
+            <Button padding={5} mr={5} mt={5} bg={"white"}>
               <FiPlus></FiPlus>Edit
-            </Link>
+            </Button>
           </Box>
         </Sidebar>
       </Box>

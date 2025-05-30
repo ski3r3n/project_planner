@@ -18,7 +18,7 @@ export default function TaskCard({
 }) {
   const pathname = usePathname();
   const pathParts = pathname.split("/");
-  const projectId = pathParts[3]; // if it works it works surely
+  const projectId = pathParts[3]; // replace with something better
   return (
     <>
       <Box
@@ -38,7 +38,7 @@ export default function TaskCard({
           flexDir="column"
           justifyContent="center">
           <Heading w="fit" fontSize="2xl" mt={5} mb={5}>
-            <Link href={`./${projectId}/${taskId}`}>
+            <Link href={`/dashboard/project/${projectId}/${taskId}`}>
               {type}: {name}
               <br />
               From: {project}
