@@ -11,7 +11,7 @@ export default function Sidebar({
 }) {
   return (
     <>
-      <Box display="flex">
+      <Box display="flex" position="fixed" left={0} top={0} w="100%" h="100vh">
         <Box h={"100vh"} w={"250px"} bg={"gray.100"} p={4}>
           <Heading w="fit" fontSize="2xl" margin="auto" mt={5} mb={5}>
             Projects
@@ -56,7 +56,9 @@ export default function Sidebar({
               {selected == 3 ? <b>Calendar</b> : "Calendar"}
             </Link>
           </Box>
-          <Box p="10"> {children}</Box>
+          <Box p="10" overflow="auto" h="calc(100vh - 60px)">
+            {children}
+          </Box>
         </Box>
       </Box>
     </>
