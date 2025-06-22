@@ -20,7 +20,7 @@ import { toaster } from "@/components/ui/toaster"; // Import your toaster utilit
 import { FirebaseError } from "firebase/app";
 // Import Firebase Authentication functions and your initialized 'auth' instance
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase"; // Adjust this path based on where you've put your firebase.ts/js file
+import { auth } from "@/lib/firebase"; // Adjust this path based on where you've put your firebase.ts/js file
 import { useRouter } from "next/navigation"; // For Next.js App Router navigation
 
 export default function Login() {
@@ -35,17 +35,44 @@ export default function Login() {
 
     try {
       // --- Firebase Authentication Core Logic ---
-      await signInWithEmailAndPassword(auth, email, password);
-      // If the above line succeeds, the user is logged in!
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user; // THIS IS THE FIREBASE USER OBJECT
 
-      toaster.create({
-        description: "Logged in successfully",
-        type: "success",
-        closable: true,
-      });
+    // Get the ID Token directly from this user object
+    const firebaseIdToken = await user.getIdToken(); // <-- THIS IS THE TOKEN YOU NEED TO SEND
+    console.log("Acquired Firebase ID Token:", firebaseIdToken); // Verify it here!
+
+    // NOW, send THIS firebaseIdToken to your server
+    const response = await fetch('/api/sessionLogin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${firebaseIdToken}`, // Optional: if your server expects an Authorization header
+      },
+      body: JSON.stringify({ idToken: firebaseIdToken }), // Make sure 'idToken' is this specific one
+    });
+      if (response.ok) {
+        console.log("Session login successful");
+        toaster.create({
+          description: "Logged in successfully! Welcome back to Project Planner.",
+          type: "success",
+          closable: true,
+          
+        });
+        router.push("/dashboard"); 
+      }
+      else {
+        console.error("Session login failed:", response.statusText);
+        toaster.create({
+          description: "Failed to establish session. Please try again.",
+          type: "error",
+          closable: true,
+        });
+        return; // Exit if session login fails
+      }
 
       // Redirect to the dashboard
-      router.push("/dashboard"); // Using Next.js router for better navigation
+      // Using Next.js router for better navigation
     } catch (error: unknown) {
       let errorMessage = "An unexpected error occurred. Please try again.";
       if (error instanceof FirebaseError) {
@@ -132,11 +159,11 @@ export default function Login() {
             Log In
           </Button>
           <Text fontSize="sm" textAlign="center" mt={4}>
-            Already have an account?{" "}
+            No account?{" "}
             <Link
               href="/signup"
               style={{ color: "blue.500", textDecoration: "underline" }}>
-              Signup
+              Sign up
             </Link>
           </Text>
         </Stack>

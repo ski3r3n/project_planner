@@ -19,7 +19,7 @@ import { toaster } from "@/components/ui/toaster"; // Import your toaster utilit
 import { FirebaseError } from "firebase/app";
 // --- KEY CHANGE: Import createUserWithEmailAndPassword instead of signInWithEmailAndPassword ---
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase"; // Adjust this path based on where you've put your firebase.ts/js file
+import { auth } from "@/lib/firebase"; // Adjust this path based on where you've put your firebase.ts/js file
 import { useRouter } from "next/navigation"; // For Next.js App Router navigation
 import Link from "next/link"; // For linking to the login page
 
@@ -47,7 +47,7 @@ export default function Signup() {
       });
 
       // Redirect to the dashboard after successful sign-up
-      router.push("/dashboard"); // Using Next.js router for better navigation
+      router.push("/login"); // Using Next.js router for better navigation
     } catch (error: unknown) {
       let errorMessage =
         "An unexpected error occurred during sign-up. Please try again.";

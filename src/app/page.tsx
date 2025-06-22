@@ -43,12 +43,12 @@ export default function Home() {
           <Box mr={"12"} padding={"1.5"}>
             EXPERIENCE EFFICIENCY
           </Box>
-          <Link href="/dashboard">
+          <Link href="/signup">
             <Button padding={"3"} rounded={"xl"} backgroundColor={"white"}>
               SIGN UP
             </Button>
           </Link>
-          <Link href="/dashboard" ml={"4"}>
+          <Link href="/login" ml={"4"}>
             <Button padding={"3"} rounded={"xl"} backgroundColor={"white"}>
               Log In
             </Button>

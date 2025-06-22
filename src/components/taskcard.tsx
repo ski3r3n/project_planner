@@ -1,5 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
+
 import { Box, Heading, Link } from "@chakra-ui/react";
 export default function TaskCard({
   type,
