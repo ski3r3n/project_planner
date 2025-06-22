@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 // import "../envConfig.ts"   
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getAuth } from 'firebase/auth'; // Only if you're using Auth
 import { getFirestore } from 'firebase/firestore'; // Only if you're using Firestore
 import { getApps, getApp } from 'firebase/app'; // For checking if Firebase is already initialized
@@ -26,6 +26,6 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app); // Only if you're using Auth
 export const db = getFirestore(app); // Only if you're using Firestore
 export const storage = getStorage(app); // Only if you're using Cloud Storage
-export const analytics = getAnalytics(app);
+// export const analytics = getAnalytics(app);
 
 export default app;
