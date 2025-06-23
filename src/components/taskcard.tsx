@@ -1,5 +1,4 @@
 "use client";
-import { usePathname } from "next/navigation";
 
 import { Box, Heading, Link } from "@chakra-ui/react";
 export default function TaskCard({
@@ -17,9 +16,7 @@ export default function TaskCard({
   link?: string;
   taskId: number;
 }) {
-  const pathname = usePathname();
-  const pathParts = pathname.split("/");
-  const projectId = pathParts[3]; // replace with something better
+  const projectId = project.split(" ").join("_").toLowerCase();
   return (
     <>
       <Box

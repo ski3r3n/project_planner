@@ -1,48 +1,22 @@
-// app/dashboard/layout.tsx
-
-import { adminAuth } from '@/lib/admin'; // Import your admin auth utility
-import { cookies } from 'next/headers';
+// import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-
-// Initialize Firebase Admin SDK (ensure this is done only once, perhaps in a separate utility file)
-// For example:
-// if (typeof window === 'undefined' && !getApps().length) {
-//   initializeApp({
-//     credential: cert(require('../path/to/your/serviceAccountKey.json'))
-//   });
-// }
+import { createClient } from '@/lib/supabaseServer'; // Adjust the import path as necessary
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
-  const cookieStore = cookies();
-  const idToken = (await cookieStore).get('session')?.value; // Make sure your client-side sets this cookie after sign-in
-  console.log("ID Token from cookie:", idToken);
-  let user = null;
-  try {
-    if (idToken) {
-      // Verify the ID token using Firebase Admin SDK
-      const decodedToken = await adminAuth.verifySessionCookie(idToken);
-      user = decodedToken;
-    }
-  } catch (error) {
-    console.error("Error verifying ID token on server:", error);
-    user = null; // Token invalid or expired
-  }
+  // const cookieStore = await cookies(); // Await cookies() to handle async behavior
+  const supabase = await createClient(); // Create Supabase client with cookies
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
-    // If not authenticated, redirect to the login page
-    // This is a server-side redirect, happens before the client component renders
-    redirect('/login'); // Make sure you have a /login page
+    redirect('/login');
   }
 
-  // If authenticated, render the children (your Client Component Dashboard page)
-  return (
-    <main>
-      {/* You can pass user info down to children if needed, e.g., via React Context */}
-      {children}
-    </main>
-  );
+  return <main>{children}</main>;
 }

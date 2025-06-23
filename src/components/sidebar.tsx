@@ -2,46 +2,10 @@
 
 import { Box, Heading, Button, Link } from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
-import { auth } from "@/lib/firebase";
 import { toaster } from "@/components/ui/toaster";
 // On your dashboard page's client-side component (e.g., within DashboardPage.tsx)
-import { signOut } from "firebase/auth";
-
-async function handleSignOut() {
-  try {
-    // Sign out from client-side Firebase Auth
-    await signOut(auth);
-
-    // Invalidate the server-side session by calling another API route
-    const response = await fetch("/api/sessionLogout", { method: "POST" });
-
-    if (response.ok) {
-      console.log("Signed out and session cleared!");
-      toaster.create({
-        description:
-          "Signed out successfully! Thank you for using Project Planner.",
-        type: "success",
-        closable: true,
-      });
-      window.location.href = "/login"; // Redirect to login page
-    } else {
-      console.error("Failed to clear session cookie on logout.");
-      toaster.create({
-        description: "Failed to clear session cookie on logout.",
-        type: "error",
-        closable: true,
-      });
-      alert(
-        "Signed out, but session may persist. Please clear browser data if issues arise."
-      );
-    }
-  } catch (error) {
-    console.error("Error during sign out:", error);
-    if (error instanceof Error) {
-      alert(`Sign out failed: ${error.message}`);
-    }
-  }
-}
+import { supabase } from "@/lib/supabaseClient"; // you'll create this if not already
+import { useState } from "react";
 
 export default function Sidebar({
   children,
@@ -50,6 +14,34 @@ export default function Sidebar({
   children: React.ReactNode;
   selected: number;
 }) {
+  const [logoutLoading, setLogoutLoading] = useState(false);
+
+  async function handleSignOut() {
+    try {
+      setLogoutLoading(true); // Set loading state to true
+      await supabase.auth.signOut();
+
+      // Invalidate the server-side session by calling another API route
+      // const response = await fetch("/api/sessionLogout", { method: "POST" });
+
+      // console.log("Signed out and session cleared!");
+      toaster.create({
+        description:
+          "Signed out successfully! Thank you for using Project Planner.",
+        type: "info",
+        closable: true,
+      });
+      window.location.href = "/login"; // Redirect to login page
+    } catch (error) {
+      // console.error("Error during sign out:", error);
+      if (error instanceof Error) {
+        alert(`Sign out failed: ${error.message}`);
+        setLogoutLoading(false); // Reset loading state regardless of success or failure
+
+      }
+    }
+  }
+
   return (
     <>
       <Box display="flex" position="fixed" left={0} top={0} w="100%" h="100vh">
@@ -111,10 +103,13 @@ export default function Sidebar({
               {selected == 3 ? <b>Calendar</b> : "Calendar"}
             </Link>
             <Link ml="auto">
-              <Button p="2"
+              <Button
+                p="2"
                 bg="red"
                 color="white"
                 _hover={{ bg: "red.600" }}
+                loading={logoutLoading}
+                loadingText="Signing out..."
                 onClick={handleSignOut}
                 fontSize="xl">
                 Sign Out

@@ -16,12 +16,10 @@ import { Field } from "@chakra-ui/react"; // Chakra v3 Field API
 
 import { useState } from "react";
 import { toaster } from "@/components/ui/toaster"; // Import your toaster utility
-import { FirebaseError } from "firebase/app";
 // --- KEY CHANGE: Import createUserWithEmailAndPassword instead of signInWithEmailAndPassword ---
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/firebase"; // Adjust this path based on where you've put your firebase.ts/js file
 import { useRouter } from "next/navigation"; // For Next.js App Router navigation
 import Link from "next/link"; // For linking to the login page
+import { supabase } from "@/lib/supabaseClient"; // you'll create this if not already
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -30,63 +28,48 @@ export default function Signup() {
   const router = useRouter(); // Initialize Next.js router
 
   const handleSignUp = async () => {
-    // Renamed function to reflect sign-up
-    setLoading(true); // Start loading state
-    console.log("Sign-up attempt with:", { email, password });
+    setLoading(true);
 
     try {
-      // --- Firebase Authentication Core Logic for SIGN UP ---
-      await createUserWithEmailAndPassword(auth, email, password);
-      // If the above line succeeds, the user is created AND logged in!
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
+      if (error) {
+        throw error;
+      }
+      console.log("Sign-Up successful:", data);
       toaster.create({
-        description:
-          "Account created successfully! Welcome to Project Planner.",
+        description: "Account created! Please check your email to confirm.",
         type: "success",
         closable: true,
       });
 
-      // Redirect to the dashboard after successful sign-up
-      router.push("/login"); // Using Next.js router for better navigation
+      router.push("/login"); // Or redirect somewhere else after signup
     } catch (error: unknown) {
+      console.error("Supabase Sign-Up Error:", error);
+
       let errorMessage =
         "An unexpected error occurred during sign-up. Please try again.";
-      if (error instanceof FirebaseError) {
-        // --- Firebase Error Handling for SIGN UP ---
-        console.error("Firebase Sign-Up Error:", error);
-        errorMessage = error.message || errorMessage;
-        // Map Firebase error codes to user-friendly messages for sign-up
-        switch (error.code) {
-          case "auth/email-already-in-use":
-            errorMessage =
-              "This email address is already registered. Please sign in or use a different email.";
-            break;
-          case "auth/invalid-email":
-            errorMessage = "The email address is not valid.";
-            break;
-          case "auth/weak-password":
-            errorMessage =
-              "The password is too weak. Please use a stronger password (e.g., at least 6 characters).";
-            break;
-          case "auth/operation-not-allowed":
-            errorMessage =
-              "Email/password sign-up is not enabled. Please contact support.";
-            break;
-          default:
-            // Fallback for any other unexpected Firebase errors
-            errorMessage = error.message || errorMessage;
+      if (error instanceof Error) {
+        if (error?.message?.includes("User already registered")) {
+          errorMessage = "This email is already registered.";
+        } else if (error?.message?.includes("Password should be at least")) {
+          errorMessage = "Password must be at least 6 characters.";
         }
-      }
 
-      toaster.create({
-        description: errorMessage,
-        type: "error",
-        closable: true,
-      });
+        toaster.create({
+          description: errorMessage,
+          type: "error",
+          closable: true,
+        });
+      }
     } finally {
-      setLoading(false); // Always stop loading, regardless of success or failure
+      setLoading(false);
     }
   };
+
 
   return (
     <Flex minH="100vh" align="center" justify="center" bg="offwhite">
