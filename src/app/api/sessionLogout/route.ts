@@ -1,7 +1,7 @@
 // app/api/sessionLogout/route.ts
 
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
+import { adminAuth } from '@/lib/admin'; // Import your admin auth utility
 import { NextResponse, /*NextRequest*/ } from 'next/server';
 import { cookies } from 'next/headers'; // For interacting with cookies
 import { toaster } from "@/components/ui/toaster"; // Import your toaster utility
@@ -33,10 +33,10 @@ export async function POST() {
   try {
     // If a session cookie existed, verify it to get the user's UID
     if (sessionCookie) {
-      const decodedClaims = await getAuth().verifySessionCookie(sessionCookie);
+      const decodedClaims = await adminAuth.verifySessionCookie(sessionCookie);
       // Revoke all refresh tokens for this user.
       // This invalidates all sessions for this user on all devices.
-      await getAuth().revokeRefreshTokens(decodedClaims.uid);
+      await adminAuth.revokeRefreshTokens(decodedClaims.uid);
       console.log(`Successfully revoked refresh tokens for UID: ${decodedClaims.uid}`);
     } else {
       console.log("No session cookie found, but still clearing client-side cookie.");
