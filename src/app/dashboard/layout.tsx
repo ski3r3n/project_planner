@@ -1,6 +1,6 @@
 // app/dashboard/layout.tsx
 
-import { getAuth } from 'firebase-admin/auth';
+import { adminAuth } from '@/lib/admin'; // Import your admin auth utility
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
@@ -24,7 +24,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   try {
     if (idToken) {
       // Verify the ID token using Firebase Admin SDK
-      const decodedToken = await getAuth().verifySessionCookie(idToken);
+      const decodedToken = await adminAuth.verifySessionCookie(idToken);
       user = decodedToken;
     }
   } catch (error) {
