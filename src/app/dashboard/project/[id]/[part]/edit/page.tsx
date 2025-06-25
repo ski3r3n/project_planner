@@ -14,9 +14,9 @@ import { FiPlus } from "react-icons/fi";
 
 const frameworks = createListCollection({
   items: [
-    { label: "Meeting", value: "meeting" },
     { label: "Goal", value: "goal" },
     { label: "Task", value: "task" },
+    { label: "Subtask", value: "subtask" },
   ],
 });
 

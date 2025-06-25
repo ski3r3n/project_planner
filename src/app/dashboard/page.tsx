@@ -3,30 +3,24 @@
 import Sidebar from "@/components/sidebar";
 import TaskCard from "@/components/taskcard";
 import { Box } from "@chakra-ui/react";
-const tasks = [
-  {
-    type: "Meeting",
-    name: "Discuss stuff",
-    project: "Project Planner",
-    time: "3/5/2025 13:05",
-    link: "https://meet.google.com",
-    taskId: 1,
-  },
+const tasks = [ // import from database in the future
   {
     type: "Task",
     name: "Finish UI",
     project: "Project Planner",
-    time: "10/6/2025",
+    startTime: "10/6/2025",
+    endTime: "10/7/2025",
     link: "https://github.com/ski3r3n/project_planner",
-    taskId: 2,
+    taskId: 1,
   },
   {
     type: "Goal",
     name: "Finish everything",
     project: "Project Planner",
-    time: "5/9/2025",
+    startTime: "5/2/2025",
+    endTime: "5/9/2025",
     link: "https://github.com/ski3r3n/project_planner",
-    taskId: 3,
+    taskId: 2,
   },
 ];
 export default function Dashboard() {

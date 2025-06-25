@@ -35,7 +35,7 @@ export default function ProjectIDTask() {
               <Box fontWeight={"bold"}>From:</Box> {"Project Planner"}
             </Heading>
             <Box display="flex" gap={2}>
-              <Box fontWeight={"bold"}>By:</Box> {"30/5/2025 13:05"}
+              <Box fontWeight={"bold"}>From:</Box>{"30/1/2025"}<Box fontWeight={"bold"}>By:</Box>{"30/5/2025"}
             </Box>
             <Box display="flex" gap={2}>
               <Box fontWeight={"bold"}>Allocated:</Box>{" "}
@@ -47,12 +47,6 @@ export default function ProjectIDTask() {
                 "This is a goal to finish everything. It is a very long. I never anticipated this! I am so surprised! I am so shocked! I am so amazed! I am so astounded! I am so flabbergasted! I am so dumbfounded! I am so astonished! I am so staggered! I am so bowled over! I am so taken aback! I am so overwhelmed! I am so blown away! I am so floored! I am so speechless! I am so awestruck! I am so thunderstruck! I am so flummoxed! I am so perplexed! I am so bewildered! I am so confounded! I am so bamboozled! I am so nonplussed! I am so dazed! I am so stunned!"
               }
             </Box>
-            <Link
-              color="blue.500"
-              textDecor="underline"
-              href="https://github.com/ski3r3n/project_planner">
-              github.com/ski3r3n/project_planner
-            </Link>
           </Box>
           <Box>
             <Link

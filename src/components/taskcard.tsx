@@ -5,13 +5,14 @@ export default function TaskCard({
   type,
   project,
   name,
-  time,
-  link = "#",
+  startTime,
+  endTime,
   taskId,
 }: {
   type: string;
   project: string;
-  time: React.ReactNode;
+  startTime: React.ReactNode;
+  endTime: React.ReactNode;
   name: string;
   link?: string;
   taskId: number;
@@ -42,18 +43,7 @@ export default function TaskCard({
               From: {project}
             </Link>
           </Heading>
-          By: {time}
-          <br />
-          {link != "#" ? (
-            <Link
-              color="blue.500"
-              textDecoration="underline"
-              href={link.slice(0, 8) == "https://" ? link : "https://" + link}>
-              {link}
-            </Link>
-          ) : (
-            ""
-          )}
+          From {startTime} to {endTime}
         </Box>
       </Box>
     </>
