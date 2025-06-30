@@ -12,7 +12,7 @@ import {
   Text,
   Spinner,
 } from "@chakra-ui/react";
-import { FiLock } from "react-icons/fi";
+import { FiLock, FiUnlock } from "react-icons/fi";
 import { useState } from "react";
 import { toaster } from "@/components/ui/toaster";
 type Task = {
@@ -136,6 +136,13 @@ export default function ProjectID() {
                     aria-label="Locked"
                     variant="ghost"
                   ><FiLock /></IconButton>
+                )}
+                {!task.locked && (
+                  <IconButton
+                    size="sm"
+                    aria-label="Locked"
+                    variant="ghost"
+                  ><FiUnlock /></IconButton>
                 )}
               </Flex>
             ))}

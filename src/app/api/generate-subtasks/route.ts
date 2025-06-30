@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 Given a task and its timeframe (Unix timestamps in ms), and a list of existing locked subtasks:
 
 - DO NOT change locked subtasks.
-- Replace unlocked subtasks with new ones that cover the remaining time.
+- Cover the remaining time with new subtasks.
 - Each subtask must have title, description, start_time, end_time (Unix ms).
 - Return an array with both locked and newly generated subtasks.
 
