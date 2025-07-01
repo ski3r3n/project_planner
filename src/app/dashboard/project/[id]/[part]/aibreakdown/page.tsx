@@ -15,6 +15,7 @@ import {
 import { FiLock, FiUnlock } from "react-icons/fi";
 import { useState } from "react";
 import { toaster } from "@/components/ui/toaster";
+
 type Task = {
   id?: string;
   title: string;
@@ -26,21 +27,40 @@ type Task = {
 
 export default function ProjectID() {
   const [tasks, setTasks] = useState<Task[]>([
-    { title: "CREATE DASHBOARD UI", start: "31/2/2025", due: "3/3/2025", locked: true },
-    { title: "CREATE PROJECT PAGE UI", start: "4/3/2025", due: "10/3/2025", locked: false },
-    { title: "CREATE CALENDAR UI", start: "11/3/2025", due: "16/3/2025", locked: false },
-    { title: "PROOFCHECK UI", start: "17/3/2025", due: "20/3/2025", locked: true },
+    {
+      title: "CREATE DASHBOARD UI",
+      start: "31/2/2025",
+      due: "3/3/2025",
+      locked: true,
+    },
+    {
+      title: "CREATE PROJECT PAGE UI",
+      start: "4/3/2025",
+      due: "10/3/2025",
+      locked: false,
+    },
+    {
+      title: "CREATE CALENDAR UI",
+      start: "11/3/2025",
+      due: "16/3/2025",
+      locked: false,
+    },
+    {
+      title: "PROOFCHECK UI",
+      start: "17/3/2025",
+      due: "20/3/2025",
+      locked: true,
+    },
   ]);
 
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Dummy IDs and times for now
   const parentTaskId = "mock-task-id";
   const projectId = "mock-project-id";
   const taskTitle = "Project UI Implementation";
-  const parentStartTime = Date.parse("2025-02-28"); // adjust as needed
-  const parentEndTime = Date.parse("2025-03-21");   // adjust as needed
+  const parentStartTime = Date.parse("2025-02-28");
+  const parentEndTime = Date.parse("2025-03-21");
 
   const handleRegenerate = async () => {
     setLoading(true);
@@ -64,7 +84,7 @@ export default function ProjectID() {
           parentStartTime,
           parentEndTime,
           existingSubtasks,
-          prompt, // optional if backend supports it
+          prompt,
         }),
       });
 
@@ -125,25 +145,26 @@ export default function ProjectID() {
                 borderRadius="md"
                 boxShadow="sm"
                 justify="space-between"
-                align="center">
+                align="center"
+              >
                 <Text>
                   <b>TITLE:</b> {task.title}, <b>START:</b> {task.start}{" "}
                   <b>DUE BY:</b> {task.due}
                 </Text>
-                {task.locked && (
-                  <IconButton
-                    size="sm"
-                    aria-label="Locked"
-                    variant="ghost"
-                  ><FiLock /></IconButton>
-                )}
-                {!task.locked && (
-                  <IconButton
-                    size="sm"
-                    aria-label="Locked"
-                    variant="ghost"
-                  ><FiUnlock /></IconButton>
-                )}
+                <IconButton
+                  size="sm"
+                  aria-label={task.locked ? "Locked" : "Unlocked"}
+                  variant="ghost"
+                  onClick={() => {
+                    setTasks((prev) =>
+                      prev.map((t, i) =>
+                        i === idx ? { ...t, locked: !t.locked } : t
+                      )
+                    );
+                  }}
+                >
+                  {task.locked ? <FiLock /> : <FiUnlock />}
+                </IconButton>
               </Flex>
             ))}
           </Stack>
@@ -164,7 +185,8 @@ export default function ProjectID() {
               p="3"
               fontSize="lg"
               onClick={handleRegenerate}
-              disabled={loading}>
+              disabled={loading}
+            >
               {loading ? <Spinner size="sm" /> : "- REGENERATE"}
             </Button>
             <Button bg="green.400" p="3" fontSize="xl">
