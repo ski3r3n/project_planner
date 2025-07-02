@@ -1,4 +1,5 @@
 "use client";
+
 import { Box } from "@chakra-ui/react";
 import {
   Bar,
@@ -8,75 +9,88 @@ import {
   YAxis,
   Tooltip,
   TooltipProps,
+  ReferenceLine,
 } from "recharts";
 import { Chart, useChart } from "@chakra-ui/charts";
 import Sidebar from "@/components/sidebar";
 
 export default function Calendar() {
-  // Helper function to format dates
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
   };
 
-  // Helper function to calculate days between two dates
   const daysBetween = (start: Date, end: Date) => {
-    return Math.round(
-      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
   };
 
-  // Create project timeline with actual dates
-  const startDate = new Date("2025-01-01"); // this can be changed in
+  const startDate = new Date("2025-01-01");
+  const today = new Date();
 
-  // Define project phases with start and end dates
   const projectPhases = [
     {
       phase: "Ideation",
       start: new Date("2025-01-01"),
-      end: new Date("2025-03-22"), // 80 days
+      end: new Date("2025-03-22"),
     },
     {
       phase: "Survey",
       start: new Date("2025-03-22"),
-      end: new Date("2025-06-25"), // 95 days
+      end: new Date("2025-06-25"),
     },
     {
       phase: "UI",
-      start: new Date("2025-03-12"), // Starts 10 days before Survey (overlapping)
-      end: new Date("2025-06-25"), // 105 days
+      start: new Date("2025-03-12"),
+      end: new Date("2025-06-25"),
     },
     {
       phase: "Backend",
       start: new Date("2025-06-25"),
-      end: new Date("2025-09-19"), // 86 days
+      end: new Date("2025-09-19"),
     },
     {
       phase: "Report",
-      start: new Date("2025-07-05"), // Starts 10 days after Backend (overlapping)
-      end: new Date("2025-10-04"), // 91 days
+      start: new Date("2025-07-05"),
+      end: new Date("2025-10-04"),
     },
     {
       phase: "Publish",
       start: new Date("2025-10-28"),
-      end: new Date("2026-01-01"), // 65 days
+      end: new Date("2026-01-01"),
     },
   ];
 
-  // Calculate the end date of the project
   const endDate = new Date("2026-01-01");
   const projectDuration = daysBetween(startDate, endDate);
 
-  // Prepare data for the chart
   const chartData = projectPhases.map((phase) => {
     const daysBeforeStart = daysBetween(startDate, phase.start);
     const phaseDuration = daysBetween(phase.start, phase.end);
-    const daysAfterEnd = projectDuration - daysBeforeStart - phaseDuration;
+
+    let done = 0;
+    let ongoing = 0;
+    let upcoming = 0;
+
+    if (today < phase.start) {
+      // Entire phase upcoming
+      upcoming = phaseDuration;
+    } else if (today > phase.end) {
+      // Entire phase done
+      done = phaseDuration;
+    } else {
+      // Entire phase ongoing
+      ongoing = phaseDuration;
+    }
 
     return {
       phase: phase.phase,
       days_before: daysBeforeStart,
-      days: phaseDuration,
-      days_after: daysAfterEnd,
+      done,
+      ongoing,
+      upcoming,
+      days_after: projectDuration - daysBeforeStart - phaseDuration,
       startDate: formatDate(phase.start),
       endDate: formatDate(phase.end),
       dateRange: `${formatDate(phase.start)} - ${formatDate(phase.end)}`,
@@ -87,34 +101,31 @@ export default function Calendar() {
     data: chartData,
     series: [
       { name: "days_before", color: "transparent", stackId: "a" },
-      { name: "days", color: "blue.solid", stackId: "a" },
+      { name: "done", color: "green", stackId: "a" },
+      { name: "ongoing", color: "orange", stackId: "a" },
+      { name: "upcoming", color: "grey", stackId: "a" },
       { name: "days_after", color: "transparent", stackId: "a" },
     ],
   });
 
-  // Custom tooltip to show date information
   const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
     active,
     payload,
   }) => {
     if (active && payload && payload.length) {
-      // check if not null
       const data = payload[0].payload;
       return (
         <Box
-          className="custom-tooltip"
-          style={{
-            backgroundColor: "white",
-            padding: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-          }}>
-          <Box>
-            <strong>{data.phase}</strong>
-          </Box>
+          bg="white"
+          p="10px"
+          border="1px solid #ccc"
+          borderRadius="4px"
+          boxShadow="0 2px 5px rgba(0,0,0,0.1)">
+          <Box fontWeight="bold">{data.phase}</Box>
           <Box>{data.dateRange}</Box>
-          <Box>Duration: {data.days} days</Box>
+          <Box>Done: {data.done} days</Box>
+          <Box>Ongoing: {data.ongoing} days</Box>
+          <Box>Upcoming: {data.upcoming} days</Box>
         </Box>
       );
     }
@@ -139,7 +150,6 @@ export default function Calendar() {
               date.setDate(date.getDate() + value);
               return formatDate(date);
             }}
-            ticks={[0, 60, 120, 180, 240, 300, 365]}
           />
           <YAxis
             type="category"
@@ -154,15 +164,25 @@ export default function Calendar() {
           />
           {chart.series.map((item) => (
             <Bar
+              key={item.name}
               barSize={30}
               isAnimationActive={false}
-              key={item.name}
               dataKey={chart.key(item.name)}
-              fill={chart.color(item.color)}
-              stroke={chart.color(item.color)}
+              fill={item.color}
               stackId={item.stackId}
             />
           ))}
+          <ReferenceLine
+            x={daysBetween(startDate, today)}
+            stroke="red"
+            strokeDasharray="4"
+            label={{
+              position: "insideTop",
+              value: "Today",
+              fill: "red",
+              fontSize: 12,
+            }}
+          />
         </BarChart>
       </Chart.Root>
     </Sidebar>
