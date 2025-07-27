@@ -2,8 +2,13 @@
 
 import Sidebar from "@/components/sidebar";
 import TaskCard from "@/components/taskcard";
-import { Box } from "@chakra-ui/react";
-const tasks = [ // import from database in the future
+import { Box, Heading } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+
+// Motion wrapper for animations
+const MotionBox = motion(Box);
+
+const tasks = [
   {
     type: "Task",
     name: "Finish UI",
@@ -23,26 +28,42 @@ const tasks = [ // import from database in the future
     taskId: 2,
   },
 ];
+
 export default function Dashboard() {
   return (
-    <>
-      <Box>
-        <Sidebar selected={1}>
+    <Box bg="#F5F7FA" minH="100vh">
+      <Sidebar selected={1}>
+        <Box px={6} pt={6}>
+          <Heading
+            size="lg"
+            color="#1A1A1A"
+            fontWeight="semibold"
+            mb={6}
+            letterSpacing="-0.5px"
+            transition="color 0.3s"
+          >
+            Smart Planner Board
+          </Heading>
+
           <Box
             display="flex"
-            flexDir="row"
             flexWrap="wrap"
-            gap={5}
-            overflow={"wrap"}>
-            {" "}
-            {/* load tasks and meetings of user */}
-            
-            {tasks.map((task) => (
-            <TaskCard key={task.taskId} {...task} />
-          ))}
+            gap={6}
+            justifyContent="flex-start"
+          >
+            {tasks.map((task, i) => (
+              <MotionBox
+                key={task.taskId}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.1 }}
+              >
+                <TaskCard {...task} />
+              </MotionBox>
+            ))}
           </Box>
-        </Sidebar>
-      </Box>
-    </>
+        </Box>
+      </Sidebar>
+    </Box>
   );
 }
