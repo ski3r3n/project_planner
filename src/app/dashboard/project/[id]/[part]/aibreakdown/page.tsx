@@ -11,6 +11,7 @@ import {
   IconButton,
   Text,
   Spinner,
+  Badge,
 } from "@chakra-ui/react";
 import { FiLock, FiUnlock } from "react-icons/fi";
 import { useState } from "react";
@@ -22,35 +23,23 @@ type Task = {
   description?: string;
   start: string;
   due: string;
+  locked: boolean;
+};
+
+type BackendSubtask = {
+  title: string;
+  description?: string;
+  start_time: number | string;
+  end_time: number | string;
   locked?: boolean;
 };
 
 export default function ProjectID() {
   const [tasks, setTasks] = useState<Task[]>([
-    {
-      title: "CREATE DASHBOARD UI",
-      start: "31/2/2025",
-      due: "3/3/2025",
-      locked: true,
-    },
-    {
-      title: "CREATE PROJECT PAGE UI",
-      start: "4/3/2025",
-      due: "10/3/2025",
-      locked: false,
-    },
-    {
-      title: "CREATE CALENDAR UI",
-      start: "11/3/2025",
-      due: "16/3/2025",
-      locked: false,
-    },
-    {
-      title: "PROOFCHECK UI",
-      start: "17/3/2025",
-      due: "20/3/2025",
-      locked: true,
-    },
+    { title: "CREATE DASHBOARD UI", start: "31/2/2025", due: "3/3/2025", locked: true },
+    { title: "CREATE PROJECT PAGE UI", start: "4/3/2025", due: "10/3/2025", locked: false },
+    { title: "CREATE CALENDAR UI", start: "11/3/2025", due: "16/3/2025", locked: false },
+    { title: "PROOFCHECK UI", start: "17/3/2025", due: "20/3/2025", locked: true },
   ]);
 
   const [prompt, setPrompt] = useState("");
@@ -66,7 +55,7 @@ export default function ProjectID() {
     setLoading(true);
 
     try {
-      const existingSubtasks = tasks.map((task) => ({
+      const existingSubtasks = tasks.map((task: Task) => ({
         title: task.title,
         description: task.description || task.title,
         start_time: Date.parse(task.start),
@@ -88,25 +77,17 @@ export default function ProjectID() {
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as { subtasks: BackendSubtask[]; error?: string };
 
       if (!res.ok) throw new Error(data.error || "Unknown error");
 
-      type BackendSubtask = {
-        title: string;
-        description?: string;
-        start_time: number | string;
-        end_time: number | string;
-        locked?: boolean;
-      };
-
       setTasks(
-        (data.subtasks as BackendSubtask[]).map((task) => ({
+        data.subtasks.map((task) => ({
           title: task.title,
           description: task.description,
           start: new Date(task.start_time).toLocaleDateString(),
           due: new Date(task.end_time).toLocaleDateString(),
-          locked: task.locked,
+          locked: task.locked || false,
         }))
       );
 
@@ -131,67 +112,125 @@ export default function ProjectID() {
   return (
     <Box>
       <Sidebar selected={2}>
-        <Box display="flex" flexDir="column" gap={5}>
-          <Flex justify="space-between" align="center" mb={4}>
-            <Heading size="lg">Task Breakdown:</Heading>
+        <Box px={4} py={6} bg="gray.50" pb="120px" minH="calc(100vh - 60px)">
+          <Flex justify="space-between" align="center" mb={6}>
+            <Heading fontSize="2xl">Task Breakdown</Heading>
           </Flex>
 
-          <Stack>
+          <Stack gap={4}>
             {tasks.map((task, idx) => (
               <Flex
                 key={idx}
-                p={3}
+                p={4}
                 bg="white"
-                borderRadius="md"
-                boxShadow="sm"
+                borderRadius="2xl"
+                boxShadow="md"
                 justify="space-between"
                 align="center"
+                _hover={{
+                  boxShadow:
+                    "0 8px 20px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.04)",
+                  transform: "scale(1.01)",
+                  transition: "0.2s",
+                }}
               >
-                <Text>
-                  <b>TITLE:</b> {task.title}, <b>START:</b> {task.start}{" "}
-                  <b>DUE BY:</b> {task.due}
-                </Text>
+                <Box>
+                  <Badge colorScheme={task.locked ? "red" : "green"} mb={1}>
+                    {task.locked ? "Locked" : "Editable"}
+                  </Badge>
+                  <Text fontWeight="bold">{task.title}</Text>
+                  <Text fontSize="sm" color="gray.600">
+                    {task.start} → {task.due}
+                  </Text>
+                </Box>
+
                 <IconButton
-                  size="sm"
-                  aria-label={task.locked ? "Locked" : "Unlocked"}
+                  aria-label="Toggle Lock"
                   variant="ghost"
-                  onClick={() => {
+                  size="md"
+                  onClick={() =>
                     setTasks((prev) =>
                       prev.map((t, i) =>
                         i === idx ? { ...t, locked: !t.locked } : t
                       )
-                    );
-                  }}
+                    )
+                  }
                 >
                   {task.locked ? <FiLock /> : <FiUnlock />}
                 </IconButton>
               </Flex>
             ))}
           </Stack>
+        </Box>
 
-          <Flex mt={6} align="center" gap={2}>
+        {/* Sticky Full-Width Bottom Bar */}
+        <Box
+          position="sticky"
+          bottom="0"
+          width="100%"
+          bg="white"
+          boxShadow="0 -4px 12px rgba(0, 0, 0, 0.06)"
+          px={6}
+          py={4}
+          zIndex={100}
+        >
+          <Flex
+            align="start"
+            direction={{ base: "column", md: "row" }}
+            gap={4}
+          >
             <Textarea
-              placeholder="Prompt (optional, for regeneration)"
-              size="sm"
-              border="2px solid"
-              p="1"
+              placeholder="Prompt to refine the task breakdown..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
+              border="2px solid"
+              p={3}
               resize="vertical"
+              fontSize="sm"
+              flex={1}
+              borderColor="gray.200"
+              _focus={{ borderColor: "blue.400", boxShadow: "sm" }}
             />
-            <Button
-              bg="white"
-              variant="outline"
-              p="3"
-              fontSize="lg"
-              onClick={handleRegenerate}
-              disabled={loading}
-            >
-              {loading ? <Spinner size="sm" /> : "- REGENERATE"}
-            </Button>
-            <Button bg="green.400" p="3" fontSize="xl">
-              CONFIRM TASKS
-            </Button>
+
+            <Stack direction={{ base: "column", md: "row" }} gap={2}>
+              <Button
+                onClick={handleRegenerate}
+                bg="gray.100"
+                color="black"
+                fontWeight="semibold"
+                fontSize="sm"
+                px={6}
+                boxShadow="sm"
+                transition="all 0.2s ease"
+                _hover={{
+                  bg: "gray.200",
+                  boxShadow: "md",
+                  transform: "translateY(-1px)",
+                }}
+                _active={{ bg: "gray.300", transform: "scale(0.98)" }}
+                disabled={loading}
+              >
+                {loading ? <Spinner size="sm" /> : "Regenerate"}
+              </Button>
+
+              <Button
+                bg="green.400"
+                color="white"
+                fontWeight="bold"
+                fontSize="sm"
+                px={6}
+                boxShadow="sm"
+                transition="all 0.2s ease"
+                _hover={{
+                  bg: "green.500",
+                  boxShadow: "md",
+                  transform: "translateY(-1px)",
+                }}
+                _active={{ bg: "green.600", transform: "scale(0.98)" }}
+              >
+                Confirm Tasks
+              </Button>
+            </Stack>
           </Flex>
         </Box>
       </Sidebar>

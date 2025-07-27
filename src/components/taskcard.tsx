@@ -1,6 +1,13 @@
 "use client";
 
-import { Box, Heading, Link, Badge, Text, VStack } from "@chakra-ui/react";
+import {
+  Heading,
+  LinkBox,
+  LinkOverlay,
+  Badge,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 
 export default function TaskCard({
   type,
@@ -22,7 +29,8 @@ export default function TaskCard({
   const badgeColor = type === "Goal" ? "purple" : "blue";
 
   return (
-    <Box
+    <LinkBox
+      as="article"
       w="sm"
       bg="white"
       borderRadius="2xl"
@@ -35,16 +43,17 @@ export default function TaskCard({
           "0 12px 20px -4px rgba(0, 0, 0, 0.12), 0 6px 10px -2px rgba(0, 0, 0, 0.08)",
         zIndex: 1,
       }}
+      h={`/dashboard/project/${projectId}/${taskId}`}
     >
-      <VStack align="start">
+      <VStack align="start" >
         <Badge colorScheme={badgeColor} fontSize="0.75em" borderRadius="md">
           {type}
         </Badge>
 
         <Heading fontSize="lg" fontWeight="semibold" lineHeight="short">
-          <Link href={`/dashboard/project/${projectId}/${taskId}`}>
+          <LinkOverlay href={`/dashboard/project/${projectId}/${taskId}`}>
             {name}
-          </Link>
+          </LinkOverlay>
         </Heading>
 
         <Text fontSize="sm" color="gray.600">
@@ -55,6 +64,6 @@ export default function TaskCard({
           {startTime} → {endTime}
         </Text>
       </VStack>
-    </Box>
+    </LinkBox>
   );
 }

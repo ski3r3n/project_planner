@@ -1,74 +1,71 @@
 "use client";
-import { usePathname } from "next/navigation";
 
+import { Box, Heading, Text, Button, VStack } from "@chakra-ui/react";
+import { usePathname } from "next/navigation";
+import NextLink from "next/link";
 import Sidebar from "@/components/sidebar";
-import { Box, Heading, Link } from "@chakra-ui/react";
 import { PiSparkle } from "react-icons/pi";
 import { FiPlus } from "react-icons/fi";
+
+// ...rest of the code
+
 export default function ProjectIDTask() {
   const pathName = usePathname();
+
   return (
-    <>
-      <Box>
-        <Sidebar selected={2}>
-          <Box
-            flexDir="row"
-            flexWrap="wrap"
-            gap={5}
-            overflow={"wrap"}
-            bg="white"
-            p="5"
-            rounded="md">
-            {/*
-             type="Goal"
-              name="Finish everything"
-              project="Project Planner"
-              time="5/9/2025"
-              link="github.com/ski3r3n/project_planner"
-              taskId={3}
-               */}
-            {/* replace with project specific tasks */}
-            <Heading size="5xl" fontSize={"5xl"} display="flex" gap={2}>
-              <Box fontWeight={"bold"}>Goal:</Box> {"Finish everything"}
-            </Heading>
-            <Heading size="3xl" fontSize={"3xl"} display="flex" gap={2}>
-              <Box fontWeight={"bold"}>From:</Box> {"Project Planner"}
-            </Heading>
-            <Box display="flex" gap={2}>
-              <Box fontWeight={"bold"}>From:</Box>{"30/1/2025"}<Box fontWeight={"bold"}>By:</Box>{"30/5/2025"}
+    <Box>
+      <Sidebar selected={2}>
+        <Box bg="white" p={6} borderRadius="xl" boxShadow="md">
+          <Heading fontSize="3xl" mb={6} color="gray.800" display="flex" alignItems="center" gap={2}>
+            <Box as="span" fontWeight="bold" color="gray.600">
+              Goal:
             </Box>
-            <Box display="flex" gap={2}>
-              <Box fontWeight={"bold"}>Allocated:</Box>{" "}
-              {"Kie Ren, Ryan, Yuzhong"}
-            </Box>
-            <Box display="flex" gap={2}>
-              <Box fontWeight={"bold"}>Description:</Box>{" "}
-              {
-                "This is a goal to finish everything. It is a very long. I never anticipated this! I am so surprised! I am so shocked! I am so amazed! I am so astounded! I am so flabbergasted! I am so dumbfounded! I am so astonished! I am so staggered! I am so bowled over! I am so taken aback! I am so overwhelmed! I am so blown away! I am so floored! I am so speechless! I am so awestruck! I am so thunderstruck! I am so flummoxed! I am so perplexed! I am so bewildered! I am so confounded! I am so bamboozled! I am so nonplussed! I am so dazed! I am so stunned!"
-              }
-            </Box>
-          </Box>
-          <Box>
-            <Link
-              href={`${pathName}/aibreakdown`}
-              padding={5}
-              mr={5}
-              mt={5}
-              bg={"white"}
-            >
-              <PiSparkle></PiSparkle>AI BREAKDOWN
-            </Link>
-            <Link
-              href={`${pathName}/edit`}
-              padding={5}
-              mr={5}
-              mt={5}
-              bg={"white"}>
-              <FiPlus></FiPlus>Edit
-            </Link>
-          </Box>
-        </Sidebar>
-      </Box>
-    </>
+            Finish everything
+          </Heading>
+
+          <VStack align="start">
+            <Text fontSize="md" color="gray.700">
+              <strong>Project:</strong> Project Planner
+            </Text>
+            <Text fontSize="md" color="gray.700">
+              <strong>From:</strong> 30/1/2025 &nbsp;&nbsp;&nbsp;
+              <strong>By:</strong> 30/5/2025
+            </Text>
+            <Text fontSize="md" color="gray.700">
+              <strong>Allocated:</strong> Kie Ren, Ryan, Yuzhong
+            </Text>
+
+            <Box w="100%" h="1px" bg="gray.200" my={4} />
+
+            <Text fontSize="sm" fontWeight="bold" color="gray.600">
+              Description:
+            </Text>
+            <Text fontSize="md" color="gray.700" whiteSpace="pre-wrap">
+              This is a goal to finish everything. It is very long. I never anticipated this! I am so surprised! I am sorry I had to edit this long paragraph so I  will replac it with my own. did you know thast cheetas run and deers run but humans walk unless they runs away from running cheetas but running deers not so much because they can gun em down.
+            </Text>
+          </VStack>
+        </Box>
+
+        <Box mt={6} display="flex" gap={4}>
+          <NextLink href={`${pathName}/aibreakdown`} passHref>
+            <Button as="a" bg="gray.100" _hover={{ bg: "gray.200" }} fontWeight="medium">
+              <Box display="flex" alignItems="center" gap={2}>
+                <PiSparkle />
+                AI Breakdown
+              </Box>
+            </Button>
+          </NextLink>
+
+          <NextLink href={`${pathName}/edit`} passHref>
+            <Button as="a" bg="gray.100" _hover={{ bg: "gray.200" }} fontWeight="medium">
+              <Box display="flex" alignItems="center" gap={2}>
+                <FiPlus />
+                Edit
+              </Box>
+            </Button>
+          </NextLink>
+        </Box>
+      </Sidebar>
+    </Box>
   );
 }
