@@ -143,7 +143,6 @@ End: ${parentEndTime}`;
     project_id: projectId,
     created_by: user.id,
     status: 'todo',
-    locked: t.locked ?? false
   }));
 
   const { error: upsertError } = await supabase.from('tasks').upsert(subtasksToUpsert);

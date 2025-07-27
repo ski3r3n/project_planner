@@ -10,7 +10,6 @@ const tasks = [
     project: "Project Planner",
     startTime: "10/6/2025",
     endTime: "10/7/2025",
-    link: "https://github.com/ski3r3n/project_planner",
     taskId: 1,
   },
   {
@@ -19,7 +18,6 @@ const tasks = [
     project: "Project Planner",
     startTime: "5/2/2025",
     endTime: "5/9/2025",
-    link: "https://github.com/ski3r3n/project_planner",
     taskId: 2,
   },
 ];
