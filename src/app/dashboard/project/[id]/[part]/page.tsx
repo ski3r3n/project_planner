@@ -5,9 +5,6 @@ import { useParams, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 
-import { Box, Heading, Text, Button, VStack } from "@chakra-ui/react";
-import { usePathname } from "next/navigation";
-import NextLink from "next/link";
 import Sidebar from "@/components/sidebar";
 import {
   Box,
