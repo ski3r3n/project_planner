@@ -10,23 +10,24 @@ import {
 } from "@chakra-ui/react";
 
 export default function TaskCard({
-  type,
+  projectId,
+  hierarchy_type,
   project,
   name,
   startTime,
   endTime,
   taskId,
 }: {
-  type: string;
+  projectId: string;
+  hierarchy_type: string;
   project: string;
   startTime: React.ReactNode;
   endTime: React.ReactNode;
   name: string;
   link?: string;
-  taskId: number;
-}) {
-  const projectId = project.split(" ").join("_").toLowerCase();
-  const badgeColor = type === "Goal" ? "purple" : "blue";
+  taskId: string;
+  }) {
+    const badgeColor = hierarchy_type === "Goal" ? "purple" : "blue";
 
   return (
     <LinkBox
@@ -47,7 +48,8 @@ export default function TaskCard({
     >
       <VStack align="start" >
         <Badge colorScheme={badgeColor} fontSize="0.75em" borderRadius="md">
-          {type}
+          {hierarchy_type}
+
         </Badge>
 
         <Heading fontSize="lg" fontWeight="semibold" lineHeight="short">

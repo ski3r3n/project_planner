@@ -18,7 +18,7 @@
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.50.0",
     "cookie": "^1.0.2",
-    "framer-motion": "^12.23.9",
+    "framer-motion": "^12.23.11",
     "fs": "^0.0.1-security",
     "groq-sdk": "^0.25.0",
     "next": "^15.3.3",
