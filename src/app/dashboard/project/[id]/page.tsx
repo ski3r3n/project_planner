@@ -11,8 +11,8 @@ import { supabase } from "@/lib/supabaseClient"; // Your Supabase client instanc
 
 import Sidebar from "@/components/sidebar";
 import TaskCard from "@/components/taskcard";
-import { Box, Heading, Text, Spinner, Center } from "@chakra-ui/react";
-
+import { Box, Heading, Text, Spinner, Center, Button, Link } from "@chakra-ui/react";
+import { FiPlus } from "react-icons/fi";
 interface Project {
   id: string;
   name: string;
@@ -85,7 +85,9 @@ export default function ProjectPage() {
         // ⭐ FIX THIS LINE: Remove generic from 'from', add .returns<DbTask[]>() ⭐
         const { data: tasksData, error: tasksError } = await supabase
           .from("tasks") // NO GENERIC HERE
-          .select("id, title, description, start_time, end_time, status, hierarchy_type")
+          .select(
+            "id, title, description, start_time, end_time, status, hierarchy_type"
+          )
           .eq("project_id", projectId)
           .returns<DbTask[]>(); // <--- ADD THIS to type the returned array
 
@@ -93,16 +95,18 @@ export default function ProjectPage() {
           console.error("Error fetching tasks:", tasksError.message);
           setError("Failed to load tasks: " + tasksError.message);
         } else {
-          const formattedTasks: TaskCardProps[] = (tasksData || []).map((dbTask) => ({
-            projectId: projectData.id,
-            hierarchy_type: dbTask.hierarchy_type,
-            name: dbTask.title,
-            project: projectData.name,
-            startTime: dbTask.start_time,
-            endTime: dbTask.end_time,
-            taskId: dbTask.id,
-            status: dbTask.status,
-          }));
+          const formattedTasks: TaskCardProps[] = (tasksData || []).map(
+            (dbTask) => ({
+              projectId: projectData.id,
+              hierarchy_type: dbTask.hierarchy_type,
+              name: dbTask.title,
+              project: projectData.name,
+              startTime: dbTask.start_time,
+              endTime: dbTask.end_time,
+              taskId: dbTask.id,
+              status: dbTask.status,
+            })
+          );
           setTasks(formattedTasks);
         }
       } catch (err: unknown) {
@@ -161,8 +165,7 @@ export default function ProjectPage() {
                   flexDir="row"
                   flexWrap="wrap"
                   gap={5}
-                  overflow={"wrap"}
-                >
+                  overflow={"wrap"}>
                   {tasks.map((task) => (
                     <TaskCard key={task.taskId} {...task} />
                   ))}
@@ -170,6 +173,21 @@ export default function ProjectPage() {
               )}
             </>
           )}
+          <Button
+            display="flex"
+            alignItems="center"
+            gap={2}
+            p={4}
+            bg="#4C8EFF"
+            color="white"
+            _hover={{ bg: "#3B6EDC" }}
+            fontWeight="medium"
+            justifyContent="flex-start"
+            mt={4} // Margin top to separate from project list} // Assuming a route for creating new projects
+          >
+            <Link href={`${projectId}/new/edit`}> Create New Project</Link>
+            <FiPlus />
+          </Button>
         </Sidebar>
       </Box>
     </>

@@ -3,16 +3,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient"; // Assuming this path is correct
-import { motion } from "framer-motion"; // Assuming you have a MotionBox component for animations
+import { supabase } from "@/lib/supabaseClient";
+import { motion } from "framer-motion";
 import Sidebar from "@/components/sidebar";
 import TaskCard from "@/components/taskcard";
 import { Box, Spinner, Center, Text, Heading } from "@chakra-ui/react";
 const MotionBox = motion(Box);
 
 // --- Interfaces for fetched data from Supabase ---
-// This represents the structure of a single row returned by your Supabase query
-// when you select `*, projects(name)`
 interface FetchedTaskWithProject {
   id: string;
   title: string;
@@ -20,25 +18,23 @@ interface FetchedTaskWithProject {
   start_time: string; // YYYY-MM-DD or ISO string from DB
   end_time: string; // YYYY-MM-DD or ISO string from DB
   project_id: string;
-  hierarchy_type: 'goal' | 'task' | 'subtask';
+  hierarchy_type: "goal" | "task" | "subtask";
   status: string;
   parent_task_id: string | null;
-  created_by: string; // Assuming this is always present for tasks
-  projects: { // This matches the `projects(name)` part of your select
+  projects: {
     name: string;
-  } | null; // It could be null if a task somehow has no associated project
+  } | null;
 }
 
-// Props expected by TaskCard (adjust if TaskCard's props are different)
 interface TaskCardProps {
   projectId: string;
-  hierarchy_type: string; // 'type' here maps to 'hierarchy_type' from DB
-  name: string; // Maps to 'title' from DB
-  project: string; // The project name string
-  startTime: string; // YYYY-MM-DD
-  endTime: string; // YYYY-MM-DD
-  taskId: string; // Maps to 'id' from DB
-  status?: string; // Add status to TaskCardProps if it uses it
+  hierarchy_type: string; // Use 'hierarchy_type' directly
+  name: string;
+  project: string;
+  startTime: string;
+  endTime: string;
+  taskId: string;
+  status?: string;
 }
 
 export default function Dashboard() {
@@ -52,41 +48,63 @@ export default function Dashboard() {
       setError(null);
 
       try {
-        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const { data: userData, error: userError } =
+          await supabase.auth.getUser();
         if (userError || !userData?.user) {
           throw new Error("User not authenticated. Please log in.");
         }
         const currentUserId = userData.user.id;
 
-        // Fetch tasks and associated project names
+        // First, get all project IDs the current user is a member of
+        const { data: memberProjects, error: memberError } = await supabase
+          .from("project_members")
+          .select("project_id")
+          .eq("user_id", currentUserId);
+
+        if (memberError) {
+          throw memberError;
+        }
+
+        // Extract the project IDs into an array
+        const projectIds = memberProjects.map((pm) => pm.project_id);
+
+        if (projectIds.length === 0) {
+          setTasks([]); // User is not part of any projects, so no tasks
+          setLoading(false);
+          return;
+        }
+
+        // Now, fetch tasks that belong to these project IDs
         const { data, error: fetchError } = await supabase
-          .from('tasks')
-          .select(`
-            *, // Select all columns from tasks
-            projects(name) // Select the 'name' column from the 'projects' table via foreign key
-          `)
-          .eq('created_by', currentUserId) // Filter tasks created by the current user
-          .is('parent_task_id', null) // Fetch only top-level tasks (Goals and standalone Tasks) for the main dashboard view
-          .order('end_time', { ascending: true }) // Order by due date, for example
-          .returns<FetchedTaskWithProject[]>(); // ⭐ Explicitly type the returned data here
+          .from("tasks")
+          .select(
+            `
+            *,
+            projects(name)
+          `
+          )
+          .in("project_id", projectIds) // Filter by projects the user is a member of
+          .is("parent_task_id", null) // Still fetching only top-level tasks for dashboard
+          .order("end_time", { ascending: true })
+          .returns<FetchedTaskWithProject[]>();
 
         if (fetchError) {
           throw fetchError;
         }
 
         if (data) {
-          // Map the fetched data (now correctly typed as FetchedTaskWithProject[])
-          const formattedTasks: TaskCardProps[] = (data || []).map((dbTask) => ({
-            projectId: dbTask.project_id,
-            type: dbTask.hierarchy_type,
-            name: dbTask.title,
-            project: dbTask.projects ? dbTask.projects.name : "N/A", // Access nested project name
-            startTime: dbTask.start_time,
-            endTime: dbTask.end_time,
-            hierarchy_type: dbTask.hierarchy_type, // Ensure this matches TaskCardProps
-            taskId: dbTask.id,
-            status: dbTask.status, // Pass the status if TaskCardProps expects it
-          }));
+          const formattedTasks: TaskCardProps[] = (data || []).map(
+            (dbTask) => ({
+              projectId: dbTask.project_id,
+              hierarchy_type: dbTask.hierarchy_type,
+              name: dbTask.title,
+              project: dbTask.projects ? dbTask.projects.name : "N/A",
+              startTime: dbTask.start_time,
+              endTime: dbTask.end_time,
+              taskId: dbTask.id,
+              status: dbTask.status,
+            })
+          );
           setTasks(formattedTasks);
         }
       } catch (err: unknown) {
@@ -102,7 +120,7 @@ export default function Dashboard() {
     }
 
     fetchTasks();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   if (loading) {
     return (
@@ -135,35 +153,35 @@ export default function Dashboard() {
     <>
       <Box>
         <Sidebar selected={1}>
-          <Heading as="h1" size="xl" mb={6}>Your Dashboard</Heading>
+          <Heading as="h1" size="xl" mb={6}>
+            Your Dashboard
+          </Heading>
           <Box
             bg="white"
-          p={8}
-          borderRadius="xl"
-          boxShadow="sm"
-          display="flex"
-          flexDirection="column"
-          gap={6}
-          >
+            p={8}
+            borderRadius="xl"
+            boxShadow="sm"
+            display="flex"
+            flexDirection="column"
+            gap={6}>
             {tasks.length === 0 ? (
               <Text fontSize="lg" color="gray.500">
-                No tasks found. Start by creating a new project or task!
+                No tasks found. Start by creating a new project or task, or ask
+                to be added to an existing project!
               </Text>
             ) : (
-                tasks.map((task, i) => (
+              tasks.map((task, i) => (
                 <MotionBox
-
-                key={task.taskId}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.1 }}
-              >
-                <TaskCard key={task.taskId} {...task} />
-              </MotionBox>
-            ))
-          )}
-        </Box>
-      </Sidebar>
+                  key={task.taskId}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.1 }}>
+                  <TaskCard {...task} />
+                </MotionBox>
+              ))
+            )}
+          </Box>
+        </Sidebar>
       </Box>
     </>
   );
