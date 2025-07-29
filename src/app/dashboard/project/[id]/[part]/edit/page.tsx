@@ -285,12 +285,13 @@ export default function TaskFormPage() {
     <Box>
       <Sidebar selected={2}>
         <Box
-          flexDir="column"
-          flexWrap="wrap"
-          gap={5}
           bg="white"
-          p="5"
-          rounded="md"
+          p={8}
+          borderRadius="xl"
+          boxShadow="sm"
+          display="flex"
+          flexDirection="column"
+          gap={6}
         >
           {/* Page Heading */}
           <Heading size="lg" mb={5}>

@@ -1,11 +1,19 @@
 "use client";
 
-import { Box, Heading, Button, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  Link,
+  Text,
+  VStack,
+  Flex,
+} from "@chakra-ui/react";
 import { FiPlus } from "react-icons/fi";
-import { toaster } from "@/components/ui/toaster";
-// On your dashboard page's client-side component (e.g., within DashboardPage.tsx)
-import { supabase } from "@/lib/supabaseClient"; // you'll create this if not already
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toaster } from "@/components/ui/toaster";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Sidebar({
   children,
@@ -15,112 +23,156 @@ export default function Sidebar({
   selected: number;
 }) {
   const [logoutLoading, setLogoutLoading] = useState(false);
+  const router = useRouter();
+
+  const tabItems = [
+    { name: "Overview", route: "/dashboard", id: 1 },
+    { name: "Project", route: "/dashboard/project", id: 2 },
+    { name: "Calendar", route: "/dashboard/project/1/calendar", id: 3 },
+  ];
 
   async function handleSignOut() {
     try {
-      setLogoutLoading(true); // Set loading state to true
+      setLogoutLoading(true);
       await supabase.auth.signOut();
-
-      // Invalidate the server-side session by calling another API route
-      // const response = await fetch("/api/sessionLogout", { method: "POST" });
-
-      // console.log("Signed out and session cleared!");
       toaster.create({
         description:
           "Signed out successfully! Thank you for using Project Planner.",
         type: "info",
         closable: true,
       });
-      window.location.href = "/login"; // Redirect to login page
+      window.location.href = "/login";
     } catch (error) {
-      // console.error("Error during sign out:", error);
       if (error instanceof Error) {
         alert(`Sign out failed: ${error.message}`);
-        setLogoutLoading(false); // Reset loading state regardless of success or failure
-
+        setLogoutLoading(false);
       }
     }
   }
 
   return (
-    <>
-      <Box display="flex" position="fixed" left={0} top={0} w="100%" h="100vh">
-        <Box h={"100vh"} w={"250px"} bg={"gray.100"} p={4}>
-          <Heading w="fit" fontSize="2xl" margin="auto" mt={5} mb={5}>
-            Projects
+    <Box display="flex" position="fixed" left={0} top={0} w="100%" h="100vh">
+      {/* Sidebar */}
+      <Box
+        h="100vh"
+        w="260px"
+        bg="#E9EFF6"
+        p={5}
+        borderRight="1px solid #CBD5E0"
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+      >
+        {/* Top Section */}
+        <Box>
+          <Heading
+            fontSize="2xl"
+            mb={6}
+            textAlign="center"
+            color="#1A1A1A"
+            letterSpacing="-0.5px"
+          >
+            Project Hub
           </Heading>
-          <Link
-            fontSize={"xl"}
-            width="100%"
-            height="28"
-            _hover={{ bgColor: "ourBg" }}
-            shadow={"md"}
-            mt={5}
-            href="/dashboard/project/1"
-            display="flex"
-            justifyContent={"center"}>
-            <Button>Project Planner {/* replace with automation */}</Button>
-          </Link>
-          <Button
-            fontSize={"xl"}
-            width="100%"
-            height="28"
-            _hover={{ bgColor: "ourBg" }}
-            shadow={"md"}
-            mt={5}>
-            <FiPlus></FiPlus>Create
-          </Button>
-        </Box>
-        <Box flex="1">
-          <Box
-            h="60px"
-            bg={"gray.100"}
-            p={10}
-            display="flex"
-            flexDir={"row"}
-            justifyContent={"flex-start"}>
-            <Link
-              w="fit"
-              fontSize="xl"
-              textDecor={"underline"}
-              mr={20}
-              href="/dashboard">
-              {selected == 1 ? <b>Overview</b> : "Overview"}
-            </Link>
-            <Link
-              w="fit"
-              fontSize="xl"
-              textDecor={"underline"}
-              mr={20}
-              href="/dashboard/project">
-              {selected == 2 ? <b>Project</b> : "Project"}
-            </Link>
-            <Link
-              w="fit"
-              fontSize="xl"
-              textDecor={"underline"}
-              href="/dashboard/project/1/calendar">
-              {selected == 3 ? <b>Calendar</b> : "Calendar"}
-            </Link>
-            <Link ml="auto">
+
+          <VStack align="stretch" mb={4}>
+            <Link href="/dashboard/project/1">
               <Button
-                p="2"
-                bg="red"
-                color="white"
-                _hover={{ bg: "red.600" }}
-                loading={logoutLoading}
-                loadingText="Signing out..."
-                onClick={handleSignOut}
-                fontSize="xl">
-                Sign Out
+                w="100%"
+                colorScheme={selected === 1 ? "blue" : "gray"}
+                variant={selected === 1 ? "solid" : "ghost"}
+                justifyContent="flex-start"
+                fontWeight="medium"
+              >
+                Project Planner
               </Button>
             </Link>
-          </Box>
-          <Box p="10" overflow="auto" h="calc(100vh - 60px)">
-            {children}
-          </Box>
+
+            <Button
+              display="flex"
+              alignItems="center"
+              gap={2}
+              bg="#4C8EFF"
+              color="white"
+              _hover={{ bg: "#3B6EDC" }}
+              fontWeight="medium"
+              justifyContent="flex-start"
+            >
+              <FiPlus />
+              Create Project
+            </Button>
+          </VStack>
+
+          {/* Substitute for Divider */}
+          <Box h="1px" bg="#CBD5E0" my={4} />
+        </Box>
+
+        {/* Sign Out Button */}
+        <Box>
+          <Button
+            w="100%"
+            bg="#FF5C5C"
+            color="white"
+            _hover={{ bg: "#E74646" }}
+            loading={logoutLoading}
+            loadingText="Signing out..."
+            onClick={handleSignOut}
+            fontWeight="medium"
+          >
+            Sign Out
+          </Button>
         </Box>
       </Box>
-    </>
+
+      {/* Main Panel */}
+      <Box flex="1" bg="#F8FAFC">
+        {/* Tab Navigation (topbar retained) */}
+        <Box
+          h="60px"
+          px={10}
+          py={3}
+          bg="#EDF2F7"
+          boxShadow="sm"
+          borderBottom="1px solid #CBD5E0"
+        >
+          <Flex height="100%" alignItems="center">
+            {tabItems.map((tab, index) => (
+              <Box
+                key={tab.id}
+                onClick={() => router.push(tab.route)}
+                cursor="pointer"
+                px={4}
+                py={2}
+                borderRight={
+                  index !== tabItems.length - 1
+                    ? "1px solid #CBD5E0"
+                    : "none"
+                }
+                bg={selected === tab.id ? "#E2E8F0" : "transparent"}
+                _hover={{
+                  transform: "translateY(1px)",
+                  bg: selected === tab.id ? "#E2E8F0" : "#F0F4F8",
+                }}
+                transition="all 0.15s ease-in-out"
+                borderRadius="md"
+              >
+                <Text
+                  fontSize="lg"
+                  fontWeight={selected === tab.id ? "bold" : "medium"}
+                  color="#1A1A1A"
+                >
+                  {tab.name}
+                </Text>
+              </Box>
+            ))}
+          </Flex>
+        </Box>
+
+        {/* Content Area */}
+        <Box p={10} overflowY="auto" h="calc(100vh - 60px)">
+          {children}
+        </Box>
+      </Box>
+    </Box>
   );
 }

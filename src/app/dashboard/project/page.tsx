@@ -3,7 +3,14 @@
 import { useState, useEffect } from "react"; // Import useState and useEffect
 import { supabase } from "@/lib/supabaseClient"; 
 import Sidebar from "@/components/sidebar";
-import { Box, Heading, Link, Text, Spinner, Center } from "@chakra-ui/react";
+import { Box, Heading, Text, Spinner, Center } from "@chakra-ui/react";
+import {
+  LinkBox,
+  LinkOverlay,
+  chakra,
+} from "@chakra-ui/react";
+import { motion } from "framer-motion";
+const MotionBox = motion(chakra.div);
 
 interface Project {
   id: string; // Assuming 'uuid' from DB maps to string in TS
@@ -76,38 +83,46 @@ export default function Dashboard() {
             </Center>
           ) : (
             <Box
-              display="flex"
-              flexDir="row"
-              flexWrap="wrap"
-              gap={5}
-              overflow={"wrap"}
+          display="flex"
+          flexWrap="wrap"
+          gap={8}
+          justifyContent={{ base: "center", md: "flex-start" }}
+        >
+          {projects.map((project: Project, index) => (
+            <MotionBox
+              key={project.name}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              cursor="pointer"
             >
-              {projects.map((project: Project) => (
-                <Link
-                  key={project.id}
-                  href={`/dashboard/project/${project.id}`}
-                  h={"fit"}
-                  w={"sm"}
-                  bg={"gray.100"}
-                  p={4}
-                  fontSize={"2xl"}
-                  transition="transform 0.2s, box-shadow 0.2s"
-                  _hover={{
-                    transform: "scale(1.03)",
-                    boxShadow:
-                      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-                    zIndex: 1,
-                  }}
-                >
-                  <Box margin="auto">
+                <LinkBox
+                as="article"
+                w={{ base: "100%", sm: "340px", md: "400px" }}
+                p={8}
+                borderRadius="2xl"
+                bg="#F4F6FA"
+                border="1px solid #D0D7E2"
+                boxShadow="md"
+                _hover={{
+                  bg: "#E8EDF5",
+                  boxShadow: "xl",
+                }}
+                transition="all 0.2s ease"
+              >
+                <LinkOverlay href={`/dashboard/project/${project.id}`}>
+                  <Text fontSize="2xl" fontWeight="bold" color="#2D3748">
                     {project.name}
-                    {project.description && (
-                      <Text fontSize="md" color="gray.600" mt={2}>
-                        {project.description}
-                      </Text>
-                    )}
-                  </Box>
-                </Link>
+                  </Text>
+                </LinkOverlay>
+
+                <Text mt={3} fontSize="md" color="gray.500">
+                  {project.description || "No description available."}
+                </Text>
+              </LinkBox>
+                     </MotionBox>   
               ))}
             </Box>
           )}

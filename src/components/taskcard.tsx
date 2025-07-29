@@ -1,6 +1,13 @@
 "use client";
 
-import { Box, Heading, Link } from "@chakra-ui/react";
+import {
+  Heading,
+  LinkBox,
+  LinkOverlay,
+  Badge,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 export default function TaskCard({
   projectId,
   hierarchy_type,
@@ -18,35 +25,44 @@ export default function TaskCard({
   name: string;
   link?: string;
   taskId: string;
-}) {
+  }) {
+    const badgeColor = hierarchy_type === "Goal" ? "purple" : "blue";
   return (
-    <>
-      <Box
-        transition="transform 0.2s, box-shadow 0.2s"
-        _hover={{
-          transform: "scale(1.03)",
-          boxShadow:
-            "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-          zIndex: 1,
-        }}>
-        <Box
-          h={"fit"}
-          w={"sm"}
-          bg={"gray.100"}
-          p={4}
-          display="flex"
-          flexDir="column"
-          justifyContent="center">
-          <Heading w="fit" fontSize="2xl" mt={5} mb={5}>
-            <Link href={`/dashboard/project/${projectId}/${taskId}`}>
-              {hierarchy_type}: {name}
-              <br />
-              From: {project}
-            </Link>
-          </Heading>
-          From {startTime} to {endTime}
-        </Box>
-      </Box>
-    </>
+    <LinkBox
+      as="article"
+      w="sm"
+      bg="white"
+      borderRadius="2xl"
+      boxShadow="md"
+      p={5}
+      transition="transform 0.2s ease, box-shadow 0.2s ease"
+      _hover={{
+        transform: "scale(1.03)",
+        boxShadow:
+          "0 12px 20px -4px rgba(0, 0, 0, 0.12), 0 6px 10px -2px rgba(0, 0, 0, 0.08)",
+        zIndex: 1,
+      }}
+      h={`/dashboard/project/${projectId}/${taskId}`}
+    >
+      <VStack align="start" >
+        <Badge colorScheme={badgeColor} fontSize="0.75em" borderRadius="md">
+          {hierarchy_type}
+        </Badge>
+
+        <Heading fontSize="lg" fontWeight="semibold" lineHeight="short">
+          <LinkOverlay href={`/dashboard/project/${projectId}/${taskId}`}>
+            {name}
+          </LinkOverlay>
+        </Heading>
+
+        <Text fontSize="sm" color="gray.600">
+          Project: <strong>{project}</strong>
+        </Text>
+
+        <Text fontSize="sm" color="gray.500">
+          {startTime} → {endTime}
+        </Text>
+      </VStack>
+    </LinkBox>
   );
 }

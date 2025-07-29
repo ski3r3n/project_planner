@@ -5,7 +5,17 @@ import { useParams, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 import Sidebar from "@/components/sidebar";
-import { Box, Heading, Text, Spinner, Center, Link as ChakraLink } from "@chakra-ui/react";
+import {
+  Box,
+  VStack,
+  Heading,
+  Text,
+  Spinner,
+  Center,
+  Button,
+} from "@chakra-ui/react";
+import NextLink from "next/link" ;
+
 import { PiSparkle } from "react-icons/pi";
 import { FiPlus } from "react-icons/fi";
 
@@ -24,6 +34,7 @@ interface DbTask {
   project_id: string;
   assigned_to: string | null;
   status: string;
+  hierarchy_type: string; // Assuming these are the only two types
 }
 
 interface UserProfile {
@@ -41,12 +52,11 @@ type TaskWithRelations = DbTask & {
 const formatDate = (dateString: string): string => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
   const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 };
-
 
 export default function ProjectTaskDetailPage() {
   const params = useParams();
@@ -98,7 +108,6 @@ export default function ProjectTaskDetailPage() {
         setTask(typedTaskData);
         setProject(typedTaskData?.projects || null);
         setAssignedUser(typedTaskData?.profiles || null);
-
       } catch (err: unknown) {
         console.error("Unexpected error:", err);
         if (err instanceof Error) {
@@ -114,7 +123,7 @@ export default function ProjectTaskDetailPage() {
     fetchData();
   }, [projectId, taskId]);
 
-  const displayType = task?.status === 'goal' ? 'Goal' : 'Task';
+  const displayType = task?.hierarchy_type;
 
   return (
     <>
@@ -139,65 +148,68 @@ export default function ProjectTaskDetailPage() {
             </Center>
           ) : (
             <>
-              <Box
-                flexDir="column"
-                flexWrap="wrap"
-                gap={5}
-                overflow={"wrap"}
-                bg="white"
-                p="5"
-                rounded="md"
-              >
-                <Heading size="5xl" fontSize={"5xl"} display="flex" gap={2}>
-                  <Box fontWeight={"bold"}>{displayType}:</Box> {task.title}
+              <Box bg="white" p={6} borderRadius="xl" boxShadow="md">
+                <Heading
+                  fontSize="3xl"
+                  mb={6}
+                  color="gray.800"
+                  display="flex"
+                  alignItems="center"
+                  gap={2}>
+                  <Box as="span" fontWeight="bold" color="gray.600">
+                    {displayType}:
+                  </Box>{" "}
+                  {task.title}
                 </Heading>
-                <Heading size="3xl" fontSize={"3xl"} display="flex" gap={2}>
-                  <Box fontWeight={"bold"}>From:</Box> {project?.name || "N/A"}
-                </Heading>
-                <Box display="flex" gap={2}>
-                  <Box fontWeight={"bold"}>From:</Box>
-                  {formatDate(task.start_time)}
-                  <Box fontWeight={"bold"}>By:</Box>
-                  {formatDate(task.end_time)}
-                </Box>
-                <Box display="flex" gap={2}>
-                  <Box fontWeight={"bold"}>Allocated:</Box>
-                  {assignedUser?.full_name || "Unassigned"}
-                </Box>
-                <Box display="flex" gap={2}>
+                <VStack align="start">
+                  <Box>
+                    <strong>Project:</strong> {project?.name || "N/A"}
+                  </Box>
+
+                  <Box display="flex" gap={2}>
+                    <Box fontWeight={"bold"}>From:</Box>
+                    {formatDate(task.start_time)}
+                    <Box fontWeight={"bold"}>By:</Box>
+                    {formatDate(task.end_time)}
+                  </Box>
+                  <Box display="flex" gap={2}>
+                    <Box fontWeight={"bold"}>Allocated:</Box>
+                    {assignedUser?.full_name || "Unassigned"}
+                  </Box>
+
+                  <Box display="flex" gap={2}>
+                    <Box fontWeight={"bold"}>Status:</Box>
+                    {task.status}
+                  </Box>            <Box w="100%" h="1px" bg="gray.200" my={4} />
+
                   <Box fontWeight={"bold"}>Description:</Box>
-                  {task.description || "No description provided."}
-                </Box>
-                <Box display="flex" gap={2}>
-                  <Box fontWeight={"bold"}>Status:</Box>
-                  {task.status}
-                </Box>
+
+                  <Text fontSize="md" color="gray.700" whiteSpace="pre-wrap">
+                    {task.description || "No description provided."}
+                  </Text>
+                  <Box display="flex" gap={2}></Box>
+                </VStack>
               </Box>
 
-              <Box mt={5} display="flex" gap={5}>
-                <ChakraLink
-                  href={`${pathName}/aibreakdown`}
-                  padding={5}
-                  bg={"white"}
-                  rounded="md"
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <PiSparkle />AI BREAKDOWN
-                </ChakraLink>
-                <ChakraLink
-                  href={`${pathName}/edit`}
-                  padding={5}
-                  bg={"white"}
-                  rounded="md"
-                  display="flex"
-                  alignItems="center"
-                  gap={2}
-                >
-                  <FiPlus />Edit
-                </ChakraLink>
+              <Box mt={6} display="flex" gap={4}>
+          <NextLink href={`${pathName}/aibreakdown`} passHref>
+            <Button as="a" bg="gray.100" _hover={{ bg: "gray.200" }} fontWeight="medium">
+              <Box display="flex" alignItems="center" gap={2}>
+                <PiSparkle />
+                AI Breakdown
               </Box>
+            </Button>
+          </NextLink>
+
+          <NextLink href={`${pathName}/edit`} passHref>
+            <Button as="a" bg="gray.100" _hover={{ bg: "gray.200" }} fontWeight="medium">
+              <Box display="flex" alignItems="center" gap={2}>
+                <FiPlus />
+                Edit
+              </Box>
+            </Button>
+          </NextLink>
+        </Box>
             </>
           )}
         </Sidebar>

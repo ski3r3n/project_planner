@@ -4,10 +4,11 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient"; // Assuming this path is correct
-
+import { motion } from "framer-motion"; // Assuming you have a MotionBox component for animations
 import Sidebar from "@/components/sidebar";
 import TaskCard from "@/components/taskcard";
 import { Box, Spinner, Center, Text, Heading } from "@chakra-ui/react";
+const MotionBox = motion(Box);
 
 // --- Interfaces for fetched data from Supabase ---
 // This represents the structure of a single row returned by your Supabase query
@@ -136,23 +137,32 @@ export default function Dashboard() {
         <Sidebar selected={1}>
           <Heading as="h1" size="xl" mb={6}>Your Dashboard</Heading>
           <Box
-            display="flex"
-            flexDir="row"
-            flexWrap="wrap"
-            gap={5}
-            overflow="wrap"
+            bg="white"
+          p={8}
+          borderRadius="xl"
+          boxShadow="sm"
+          display="flex"
+          flexDirection="column"
+          gap={6}
           >
             {tasks.length === 0 ? (
               <Text fontSize="lg" color="gray.500">
                 No tasks found. Start by creating a new project or task!
               </Text>
             ) : (
-              tasks.map((task) => (
+                tasks.map((task, i) => (
+                <MotionBox
+                key={task.taskId}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.1 }}
+              >
                 <TaskCard key={task.taskId} {...task} />
-              ))
-            )}
-          </Box>
-        </Sidebar>
+              </MotionBox>
+            ))
+          )}
+        </Box>
+      </Sidebar>
       </Box>
     </>
   );
