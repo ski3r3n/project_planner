@@ -16,7 +16,6 @@ import {
   Textarea,
   IconButton,
   Text,
-  Badge,
   Center,
   Spinner,
   Badge,
@@ -205,7 +204,7 @@ export default function TaskBreakdownPage() {
         }),
       });
 
-      const data = (await res.json()) as { subtasks: BackendSubtask[]; error?: string };
+      const data = (await res.json()) as { subtasks: BackendSubtaskResponseItem[]; error?: string };
 
       if (!res.ok) {
         throw new Error(data.error || "Failed to generate subtasks.");
