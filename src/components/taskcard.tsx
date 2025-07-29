@@ -2,22 +2,23 @@
 
 import { Box, Heading, Link } from "@chakra-ui/react";
 export default function TaskCard({
-  type,
+  projectId,
+  hierarchy_type,
   project,
   name,
   startTime,
   endTime,
   taskId,
 }: {
-  type: string;
+  projectId: string;
+  hierarchy_type: string;
   project: string;
   startTime: React.ReactNode;
   endTime: React.ReactNode;
   name: string;
   link?: string;
-  taskId: number;
+  taskId: string;
 }) {
-  const projectId = project.split(" ").join("_").toLowerCase();
   return (
     <>
       <Box
@@ -38,7 +39,7 @@ export default function TaskCard({
           justifyContent="center">
           <Heading w="fit" fontSize="2xl" mt={5} mb={5}>
             <Link href={`/dashboard/project/${projectId}/${taskId}`}>
-              {type}: {name}
+              {hierarchy_type}: {name}
               <br />
               From: {project}
             </Link>
