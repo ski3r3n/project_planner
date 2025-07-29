@@ -8,6 +8,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+
 export default function TaskCard({
   projectId,
   hierarchy_type,
@@ -27,6 +28,7 @@ export default function TaskCard({
   taskId: string;
   }) {
     const badgeColor = hierarchy_type === "Goal" ? "purple" : "blue";
+
   return (
     <LinkBox
       as="article"
@@ -47,6 +49,7 @@ export default function TaskCard({
       <VStack align="start" >
         <Badge colorScheme={badgeColor} fontSize="0.75em" borderRadius="md">
           {hierarchy_type}
+
         </Badge>
 
         <Heading fontSize="lg" fontWeight="semibold" lineHeight="short">

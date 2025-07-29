@@ -4,6 +4,10 @@ import { useState, useEffect } from "react";
 import { useParams, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
+
+import { Box, Heading, Text, Button, VStack } from "@chakra-ui/react";
+import { usePathname } from "next/navigation";
+import NextLink from "next/link";
 import Sidebar from "@/components/sidebar";
 import {
   Box,
@@ -192,6 +196,7 @@ export default function ProjectTaskDetailPage() {
               </Box>
 
               <Box mt={6} display="flex" gap={4}>
+
           <NextLink href={`${pathName}/aibreakdown`} passHref>
             <Button as="a" bg="gray.100" _hover={{ bg: "gray.200" }} fontWeight="medium">
               <Box display="flex" alignItems="center" gap={2}>

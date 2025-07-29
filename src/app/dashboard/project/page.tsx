@@ -83,12 +83,14 @@ export default function Dashboard() {
             </Center>
           ) : (
             <Box
+
           display="flex"
           flexWrap="wrap"
           gap={8}
           justifyContent={{ base: "center", md: "flex-start" }}
         >
           {projects.map((project: Project, index) => (
+
             <MotionBox
               key={project.name}
               initial={{ opacity: 0, y: 15 }}
@@ -99,6 +101,7 @@ export default function Dashboard() {
               cursor="pointer"
             >
                 <LinkBox
+
                 as="article"
                 w={{ base: "100%", sm: "340px", md: "400px" }}
                 p={8}
@@ -113,6 +116,7 @@ export default function Dashboard() {
                 transition="all 0.2s ease"
               >
                 <LinkOverlay href={`/dashboard/project/${project.id}`}>
+
                   <Text fontSize="2xl" fontWeight="bold" color="#2D3748">
                     {project.name}
                   </Text>
@@ -129,5 +133,6 @@ export default function Dashboard() {
         </Sidebar>
       </Box>
     </>
+
   );
 }

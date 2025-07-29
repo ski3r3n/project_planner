@@ -20,7 +20,6 @@ import {
   createListCollection,
   Select,
 } from "@chakra-ui/react";
-import { FiPlus } from "react-icons/fi";
 
 // --- Interfaces ---
 interface Project {
@@ -451,6 +450,7 @@ export default function TaskFormPage() {
             disabled={!title || saving}
           >
             <FiPlus /> {isNewMode ? "Create Task" : "Save Changes"}
+
           </Button>
           {error && (
             <Text color="red.500" mt={2} textAlign="center">

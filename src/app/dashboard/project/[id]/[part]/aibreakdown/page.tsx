@@ -19,6 +19,7 @@ import {
   Badge,
   Center,
   Spinner,
+  Badge,
 } from "@chakra-ui/react";
 import { FiLock, FiUnlock } from "react-icons/fi";
 import { toaster } from "@/components/ui/toaster";
@@ -107,6 +108,7 @@ export default function TaskBreakdownPage() {
           .select("id, title, start_time, end_time")
           .eq("id", parentTaskId)
           .single();
+
 
         if (taskError || !taskData) {
           throw new Error(
@@ -203,7 +205,7 @@ export default function TaskBreakdownPage() {
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as { subtasks: BackendSubtask[]; error?: string };
 
       if (!res.ok) {
         throw new Error(data.error || "Failed to generate subtasks.");
@@ -273,6 +275,7 @@ export default function TaskBreakdownPage() {
           project_id: projectId,
           status: "todo",
         })
+
       );
 
       const { error: upsertError } = await supabase
@@ -464,6 +467,7 @@ export default function TaskBreakdownPage() {
               </Stack>
             </Flex>
           </Box>
+
         </Box>
       </Sidebar>
     </Box>

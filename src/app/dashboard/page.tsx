@@ -152,6 +152,7 @@ export default function Dashboard() {
             ) : (
                 tasks.map((task, i) => (
                 <MotionBox
+
                 key={task.taskId}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
