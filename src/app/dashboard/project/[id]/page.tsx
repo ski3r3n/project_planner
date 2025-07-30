@@ -185,7 +185,7 @@ export default function ProjectPage() {
             justifyContent="flex-start"
             mt={4} // Margin top to separate from project list} // Assuming a route for creating new projects
           >
-            <Link href={`${projectId}/new/edit`}> Create New Project</Link>
+            <Link href={`${projectId}/new/edit`}> Create New Task</Link>
             <FiPlus />
           </Button>
         </Sidebar>

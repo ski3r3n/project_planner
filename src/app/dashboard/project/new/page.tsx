@@ -139,11 +139,11 @@ export default function CreateProjectPage() {
           <Field.Root disabled={loading}>
             <Field.Label htmlFor="projectDescription">
               Description (Optional)
-              <Field.RequiredIndicator
+              {/* <Field.RequiredIndicator
                 fallback={
                   "oops"
                 }
-              />
+              /> */}
             </Field.Label>
             <Textarea
               id="projectDescription"
