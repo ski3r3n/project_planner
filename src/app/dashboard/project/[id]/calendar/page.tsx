@@ -1,6 +1,8 @@
+// app/dashboard/project/[projectId]/calendar/page.tsx
+
 "use client";
 
-import { Box, Text} from "@chakra-ui/react";
+import { Box, Text, Spinner, Center } from "@chakra-ui/react";
 import {
   Bar,
   BarChart,
@@ -13,8 +15,30 @@ import {
 import { Chart, useChart } from "@chakra-ui/charts";
 import Sidebar from "@/components/sidebar";
 import type { TooltipProps } from "recharts";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
+
+// Define a type for your fetched task data
+interface Task {
+  id: string;
+  project_id: string;
+  name: string; // Using 'name' for the phase title
+  hierarchy_type: string; // The type of the task
+  start_time: string; // Corrected to match the new query
+  end_time: string; // Corrected to match the new query
+}
 
 export default function Calendar() {
+  const params = useParams();
+  const projectId = params.id as string;
+  const [projectPhases, setProjectPhases] = useState<Task[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [projectStartDate, setProjectStartDate] = useState<Date | null>(null);
+  const [projectEndDate, setProjectEndDate] = useState<Date | null>(null);
+
   const formatDate = (date: Date) => {
     return date.toLocaleDateString("en-US", {
       month: "short",
@@ -23,65 +47,156 @@ export default function Calendar() {
   };
 
   const daysBetween = (start: Date, end: Date) => {
-    return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+    if (!start || !end) return NaN;
+    return Math.round(
+      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    );
   };
 
-  const startDate = new Date("2025-01-01");
   const today = new Date();
 
-  const projectPhases = [
-    { phase: "Ideation", start: new Date("2025-01-01"), end: new Date("2025-03-22") },
-    { phase: "Survey", start: new Date("2025-03-22"), end: new Date("2025-06-25") },
-    { phase: "UI", start: new Date("2025-03-12"), end: new Date("2025-06-25") },
-    { phase: "Backend", start: new Date("2025-06-25"), end: new Date("2025-09-19") },
-    { phase: "Report", start: new Date("2025-07-05"), end: new Date("2025-10-04") },
-    { phase: "Publish", start: new Date("2025-10-28"), end: new Date("2026-01-01") },
-  ];
+  // --- Data Fetching Logic ---
+  useEffect(() => {
+    async function fetchProjectGoals() {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from("tasks")
+          .select("*")
+          .eq("project_id", projectId)
+          .eq("hierarchy_type", "Goal")
+          .order("start_time", { ascending: true });
 
-  const endDate = new Date("2026-01-01");
-  const projectDuration = daysBetween(startDate, endDate);
+        if (error) {
+          throw error;
+        }
 
-  const chartData = projectPhases.map((phase) => {
-    const daysBeforeStart = daysBetween(startDate, phase.start);
-    const phaseDuration = daysBetween(phase.start, phase.end);
+        if (data && data.length > 0) {
+          const overallStartDate = new Date(data[0].start_time);
+          const overallEndDate = new Date(data[data.length - 1].end_time);
 
-    let done = 0;
-    let ongoing = 0;
-    let upcoming = 0;
-
-    if (today < phase.start) {
-      upcoming = phaseDuration;
-    } else if (today > phase.end) {
-      done = phaseDuration;
-    } else {
-      ongoing = phaseDuration;
+          setProjectStartDate(overallStartDate);
+          setProjectEndDate(overallEndDate);
+          setProjectPhases(data);
+        } else {
+          setProjectPhases([]);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || "Failed to fetch project goals.");
+        } else {
+          setError("An unknown error occurred.");
+        }
+      } finally {
+        setLoading(false);
+      }
     }
 
-    return {
-      phase: phase.phase,
-      days_before: daysBeforeStart,
-      done,
-      ongoing,
-      upcoming,
-      days_after: projectDuration - daysBeforeStart - phaseDuration,
-      startDate: formatDate(phase.start),
-      endDate: formatDate(phase.end),
-      dateRange: `${formatDate(phase.start)} → ${formatDate(phase.end)}`,
-    };
-  });
+    if (projectId) {
+      fetchProjectGoals();
+    }
+  }, [projectId]);
+
+  let chartData: Array<{
+    phase: string;
+    days_before: number;
+    done: number;
+    ongoing: number;
+    upcoming: number;
+    days_after: number;
+    startDate: string;
+    endDate: string;
+    dateRange: string;
+  }> = [];
+  if (
+    projectPhases &&
+    projectPhases.length > 0 &&
+    projectStartDate &&
+    projectEndDate
+  ) {
+    chartData = projectPhases.map((phase) => {
+      const phaseStart = new Date(phase.start_time);
+      const phaseEnd = new Date(phase.end_time);
+
+      const daysBeforeStart = daysBetween(projectStartDate, phaseStart);
+      const phaseDuration = daysBetween(phaseStart, phaseEnd);
+
+      let done = 0;
+      let ongoing = 0;
+      let upcoming = 0;
+
+      if (today < phaseStart) {
+        upcoming = phaseDuration;
+      } else if (today > phaseEnd) {
+        done = phaseDuration;
+      } else {
+        done = daysBetween(phaseStart, today);
+        ongoing = daysBetween(today, phaseEnd);
+      }
+
+      return {
+        phase: phase.name,
+        days_before: daysBeforeStart,
+        done,
+        ongoing,
+        upcoming,
+        days_after: daysBetween(phaseEnd, projectEndDate),
+        startDate: formatDate(phaseStart),
+        endDate: formatDate(phaseEnd),
+        dateRange: `${formatDate(phaseStart)} → ${formatDate(phaseEnd)}`,
+      };
+    });
+  }
 
   const chart = useChart({
     data: chartData,
     series: [
       { name: "days_before", color: "transparent", stackId: "a" },
-      { name: "done", color: "#38A169", stackId: "a" },     // green
-      { name: "ongoing", color: "#DD6B20", stackId: "a" },  // orange
-      { name: "upcoming", color: "#A0AEC0", stackId: "a" }, // grey
+      { name: "done", color: "#38A169", stackId: "a" },
+      { name: "ongoing", color: "#DD6B20", stackId: "a" },
+      { name: "upcoming", color: "#A0AEC0", stackId: "a" },
       { name: "days_after", color: "transparent", stackId: "a" },
     ],
   });
 
-  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({ active, payload }) => {
+  if (loading) {
+    return (
+      <Sidebar selected={3}>
+        <Center height="xl">
+          <Spinner size="xl" />
+        </Center>
+      </Sidebar>
+    );
+  }
+
+  if (error) {
+    return (
+      <Sidebar selected={3}>
+        <Center height="xl">
+          <Text color="red.500">Error: {error}</Text>
+        </Center>
+      </Sidebar>
+    );
+  }
+
+  if (!projectPhases || projectPhases.length === 0) {
+    return (
+      <Sidebar selected={3}>
+        <Center height="xl">
+          <Text color="gray.500">
+            No goals found for this project. Please add some to see the
+            timeline.
+          </Text>
+        </Center>
+      </Sidebar>
+    );
+  }
+
+  const CustomTooltip: React.FC<TooltipProps<number, string>> = ({
+    active,
+    payload,
+  }) => {
     if (active && payload?.length) {
       const data = payload[0].payload;
       return (
@@ -90,10 +205,13 @@ export default function Calendar() {
           p={4}
           border="1px solid #CBD5E0"
           borderRadius="md"
-          shadow="md"
-        >
-          <Text fontWeight="bold" fontSize="md" mb={1}>{data.phase}</Text>
-          <Text fontSize="sm" color="gray.600">{data.dateRange}</Text>
+          shadow="md">
+          <Text fontWeight="bold" fontSize="md" mb={1}>
+            {data.phase}
+          </Text>
+          <Text fontSize="sm" color="gray.600">
+            {data.dateRange}
+          </Text>
           <Text fontSize="sm">✅ Done: {data.done} days</Text>
           <Text fontSize="sm">⏳ Ongoing: {data.ongoing} days</Text>
           <Text fontSize="sm">📅 Upcoming: {data.upcoming} days</Text>
@@ -102,6 +220,17 @@ export default function Calendar() {
     }
     return null;
   };
+
+  // Final check to ensure the chart only renders when all data is ready
+  if (!projectStartDate || !projectEndDate) {
+    return (
+      <Sidebar selected={3}>
+        <Center height="xl">
+          <Text color="gray.500">Preparing chart data...</Text>
+        </Center>
+      </Sidebar>
+    );
+  }
 
   return (
     <Sidebar selected={3}>
@@ -113,9 +242,9 @@ export default function Calendar() {
               type="number"
               axisLine={false}
               tickLine={false}
-              domain={[0, projectDuration]}
+              domain={[0, daysBetween(projectStartDate, projectEndDate)]}
               tickFormatter={(value) => {
-                const date = new Date(startDate);
+                const date = new Date(projectStartDate);
                 date.setDate(date.getDate() + value);
                 return formatDate(date);
               }}
@@ -135,17 +264,17 @@ export default function Calendar() {
             />
             {chart.series.map((item) => (
               <Bar
-                key={item.name}
+                key={String(chart.key(item.name))}
                 barSize={28}
                 isAnimationActive={false}
-                dataKey={chart.key(item.name)}
+                dataKey={String(chart.key(item.name))}
                 fill={item.color}
                 stackId={item.stackId}
                 radius={[0, 4, 4, 0]}
               />
             ))}
             <ReferenceLine
-              x={daysBetween(startDate, today)}
+              x={daysBetween(projectStartDate, today)}
               stroke="red"
               strokeDasharray="4 2"
               label={{
