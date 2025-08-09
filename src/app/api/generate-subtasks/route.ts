@@ -218,7 +218,7 @@ Provide your response as a JSON object with a single key "subtasks" which contai
   let rawAiResponse = "[]";
   try {
     const completion = await groq.chat.completions.create({
-      model: "mistral-saba-24b", // Or 'llama3-8b-8192', 'llama3-70b-8192' etc. based on your Groq access
+      model: "llama-3.1-8b-instant", // Or 'llama3-8b-8192', 'llama3-70b-8192' etc. based on your Groq access
       messages: [
         {
           role: "system",
