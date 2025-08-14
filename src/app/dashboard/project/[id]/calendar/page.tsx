@@ -23,7 +23,7 @@ import { supabase } from "@/lib/supabaseClient";
 interface Task {
   id: string;
   project_id: string;
-  name: string; // Using 'name' for the phase title
+  title: string; // Using 'name' for the phase title
   hierarchy_type: string; // The type of the task
   start_time: string; // Corrected to match the new query
   end_time: string; // Corrected to match the new query
@@ -118,7 +118,7 @@ export default function Calendar() {
     chartData = projectPhases.map((phase) => {
       const phaseStart = new Date(phase.start_time);
       const phaseEnd = new Date(phase.end_time);
-
+      console.log(phase)
       const daysBeforeStart = daysBetween(projectStartDate, phaseStart);
       const phaseDuration = daysBetween(phaseStart, phaseEnd);
 
@@ -136,7 +136,7 @@ export default function Calendar() {
       }
 
       return {
-        phase: phase.name,
+        phase: phase.title,
         days_before: daysBeforeStart,
         done,
         ongoing,
